@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <title>JeX - table</title>
+    <script type="text/javascript" src="js/rocket.13.10.min.js"></script>
+    <script type="text/javascript" src="../src/jex.js"></script>
+    <script type="text/javascript" src="../src/jex.table.js"></script>
+    <script type="text/javascript">
+      var $ = rocket.extend(rocket.$, rocket);
+      $.ready(function() {
+        var table;
+
+        table = new jex.table({'rows': 3, 'columns': 5});
+        table.table().setAttribute('border', '1');
+        table.fill_row(0, ['First', 'Second', 'Third', 'Fourth', 'Fifth']);
+        table.fill_row(1, ['1', '2', '3', '4', '5']);
+        table.td(2, 2).innerHTML('6');
+        $('#static_table').appendChild(table.table());
+
+        table = new jex.table({'rows': 3, 'columns': 5, 'thead': true});
+        table.table().setAttribute('border', '1');
+        table.fill_row(0, ['this', 'is', 'the', 'thead', 'row']);
+        table.fill_row(1, ['1', '2', '3', '4', '5']);
+        table.fill_row(2, ['6', '7', '8', '9', '10']);
+        $('#static_table_thead').appendChild(table.table());
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Static table</h1>
+    <div id="static_table"></div>
+    <h1>Static table with thead</h1>
+    <div id="static_table_thead"></div>
+  </body>
+</html>

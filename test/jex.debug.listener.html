@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <title>JeX - debug.listener</title>
+    <script type="text/javascript" src="js/rocket.13.10.min.js"></script>
+    <script type="text/javascript" src="../src/jex.js"></script>
+    <script type="text/javascript" src="../src/jex.debug.js"></script>
+    <script type="text/javascript" src="../src/jex.debug.listener.js"></script>
+    <script type="text/javascript">
+      var $ = rocket.extend(rocket.$, rocket);
+      $.ready(function() {
+        jex.debug.listener.render_count();
+        $("#add_listener").addEventListener("click", function() {
+          $("#textarea").addEventListener("focus", function() {
+            this.innerHTML += "|";
+          })
+        });
+
+        $("#remove_all_listeners").addEventListener("click", function() {
+          $("#textarea").removeEventListener();
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <button id="add_listener">Add Listener</button><br/>
+    <button id="remove_all_listeners">Remove All Listeners</button><br/>
+    Each listener added will cause a "|" to add to this field on focus.<br/>
+    <textarea id="textarea" rows="6" cols="50"></textarea>
+  </body>
+</html>

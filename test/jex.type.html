@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <title>JeX - type</title>
+    <style type="text/css">
+      .jex_placeholder {
+        color: #999;
+      }
+    </style>
+    <script type="text/javascript" src="js/rocket.13.10.min.js"></script>
+    <script type="text/javascript" src="../src/jex.js"></script>
+    <script type="text/javascript" src="../src/jex.console.js"></script>
+    <script type="text/javascript" src="../src/jex.type.js"></script>
+    <script type="text/javascript">
+      var $ = rocket.extend(rocket.$, rocket);
+      $.ready(function() {
+        var object;
+
+        // number
+        object = 1;
+        jex.console.log([object, jex.type(object)]);
+
+        // string
+        object = 'foo';
+        jex.console.log([object, jex.type(object)]);
+
+        // null
+        object = null;
+        jex.console.log([object, jex.type(object)]);
+
+        // undefined
+        object = undefined;
+        jex.console.log([object, jex.type(object)]);
+
+        // boolean
+        object = true;
+        jex.console.log([object, jex.type(object)]);
+
+        // boolean
+        object = false;
+        jex.console.log([object, jex.type(object)]);
+
+        // regexp
+        object = /regex/;
+        jex.console.log([object, jex.type(object)]);
+
+        // date
+        object = new Date();
+        jex.console.log([object, jex.type(object)]);
+
+        // object
+        object = {'foo': 'bar'};
+        jex.console.log([object, jex.type(object)]);
+
+        // array
+        object = [1, 2];
+        jex.console.log([object, jex.type(object)]);
+
+        // function
+        object = function() {};
+        jex.console.log([object, jex.type(object)]);
+
+        // nan
+        object = NaN;
+        jex.console.log([object, jex.type(object)]);
+      });
+    </script>
+  </head>
+  <body>
+    <p>See console for output.</p>
+  </body>
+</html>

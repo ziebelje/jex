@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <title>JeX - console</title>
+    <script type="text/javascript" src="js/rocket.13.10.min.js"></script>
+    <script type="text/javascript" src="../src/jex.js"></script>
+    <script type="text/javascript" src="../src/jex.console.js"></script>
+    <script type="text/javascript">
+      var $ = rocket.extend(rocket.$, rocket);
+      $.ready(function() {
+        jex.console.log('If you do not have a console open, this message should go to the buffer and output when the buffer is available...usually. See documentation for known quirks with this.');
+
+        $('#log').addEventListener('click', function() {
+          jex.console.log('jex.console.log');
+        });
+        $('#error').addEventListener('click', function() {
+          jex.console.error('jex.console.error');
+        });
+        $('#debug').addEventListener('click', function() {
+          jex.console.debug('jex.console.debug');
+        });
+        $('#warn').addEventListener('click', function() {
+          jex.console.warn('jex.console.warn');
+        });
+        $('#info').addEventListener('click', function() {
+          jex.console.info('jex.console.info');
+        });
+
+      });
+    </script>
+  </head>
+  <body>
+    <p>Click the buttons to trigger the specified console events.</p>
+    <button id="log">Log</button>
+    <button id="error">Error</button>
+    <button id="debug">Debug</button>
+    <button id="warn">Warn</button>
+    <button id="info">Info</button>
+  </body>
+</html>
