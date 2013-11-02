@@ -6,6 +6,12 @@
  * and fast to create a table and offers a few functions for easily accessing
  * elements inside the table.
  *
+ * Tested:
+ * <ul>
+ * <li>Chrome 30 - OK</li>
+ * <li>IE 10 - OK</li>
+ * </ul>
+ *
  * @param {{rows: number, columns: number, header: boolean}} options
  * rows: How many rows are in the table. Default 1.<br/>
  * columns: How many columns are in the table. Default 1.<br/>

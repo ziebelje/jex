@@ -16,14 +16,17 @@
  * all browsers define all of the functions made available here. IE8, for
  * example, doesn't support console.debug()),
  *
- * Tested in Chrome 30
- *
- * In IE11 and potentially other browsers, the console exists even when not
- * open but does not produce output. Therefore, the attempts from this class
- * to buffer the output will fail and console events can be missed. This can
- * be mitigated simply by keeping the console open. The only real utility of
- * the buffer is for older browsers without consoles that take a while to get
- * Firebug started up.
+ * Tested:
+ * <ul>
+ * <li>Chrome 30 - OK</li>
+ * <li>IE 10 - OK</li>
+ * <li>IE 11 - In IE11 and potentially other browsers, the console exists
+ * even when not open but does not produce output. Therefore, the attempts
+ * from this class to buffer the output will fail and console events can be
+ * missed. This can be mitigated simply by keeping the console open. The only
+ * real utility of the buffer is for older browsers without consoles that
+ * take a while to get Firebug started up</li>
+ * </ul>
  *
  * @example
  * // You only need to call the constructor once; it just adds prototype

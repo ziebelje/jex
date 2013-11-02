@@ -3,6 +3,12 @@
 /**
  * Debug utilities for event listeners.
  *
+ * Tested:
+ * <ul>
+ * <li>Chrome 30 - OK</li>
+ * <li>IE 10 - OK</li>
+ * </ul>
+ *
  * @const
  *
  * @namespace

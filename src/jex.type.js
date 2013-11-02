@@ -7,7 +7,15 @@
  * is what this function was designed for: null, undefined, boolean, number,
  * string, date, regexp, object, array, function, nan.
  *
- * Tested in Chrome 30, IE7, IE8, IE9, IE11
+ * Tested:
+ * <ul>
+ * <li>Chrome 30 - OK</li>
+ * <li>IE 7 - OK</li>
+ * <li>IE 8 - OK</li>
+ * <li>IE 9 - OK</li>
+ * <li>IE 10 - OK</li>
+ * <li>IE 11 - OK</li>
+ * </ul>
  *
  * @link http://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
  *
