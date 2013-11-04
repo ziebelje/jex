@@ -116,7 +116,7 @@ jex.console.info = function(message) {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/console.time
  *
- * @param {string} message The name of the timer.
+ * @param {string} timer_name The name of the timer.
  */
 jex.console.time = function(timer_name) {
   jex.console.add_to_buffer_('time', arguments);
@@ -130,7 +130,7 @@ jex.console.time = function(timer_name) {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/console.time
  *
- * @param {string} message The name of the timer.
+ * @param {string} timer_name The name of the timer.
  */
 jex.console.timeEnd = function(timer_name) {
   jex.console.add_to_buffer_('timeEnd', arguments);
