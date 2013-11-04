@@ -48,6 +48,8 @@ jex.console = {};
 /**
  * Wrapper for native console.log().
  *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/console.log
+ *
  * @param {string} message The message to output to the console.
  */
 jex.console.log = function(message) {
@@ -58,6 +60,8 @@ jex.console.log = function(message) {
 
 /**
  * Wrapper for native console.error().
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/console.error
  *
  * @param {string} message The message to output to the console.
  */
@@ -70,6 +74,8 @@ jex.console.error = function(message) {
 /**
  * Wrapper for native console.debug().
  *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/console.debug
+ *
  * @param {string} message The message to output to the console.
  */
 jex.console.debug = function(message) {
@@ -80,6 +86,8 @@ jex.console.debug = function(message) {
 
 /**
  * Wrapper for native console.warn().
+ *
+ * @see https://deveoper.mozilla.org/en-US/docs/Web/API/console.warn
  *
  * @param {string} message The message to output to the console.
  */
@@ -92,10 +100,40 @@ jex.console.warn = function(message) {
 /**
  * Wrapper for native console.info().
  *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/console.info
+ *
  * @param {string} message The message to output to the console.
  */
 jex.console.info = function(message) {
   jex.console.add_to_buffer_('info', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Wrapper for native console.time(). This will not work as desired if called
+ * when a console does not exist and the call goes to the buffer.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/console.time
+ *
+ * @param {string} message The name of the timer.
+ */
+jex.console.time = function(timer_name) {
+  jex.console.add_to_buffer_('time', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Wrapper for native console.timeEnd(). This will not work as desired if
+ * called when a console does not exist and the call goes to the buffer.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/console.time
+ *
+ * @param {string} message The name of the timer.
+ */
+jex.console.timeEnd = function(timer_name) {
+  jex.console.add_to_buffer_('timeEnd', arguments);
   jex.console.flush_buffer_();
 };
 
