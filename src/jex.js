@@ -19,7 +19,8 @@
 /**
  * Base namespace for JeX
  *
- * @namespace
  * @const
+ *
+ * @namespace
  */
 var jex = {};
