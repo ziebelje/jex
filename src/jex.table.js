@@ -12,12 +12,6 @@
  * <li>IE 10 - OK</li>
  * </ul>
  *
- * @param {{rows: number, columns: number, header: boolean}} options
- * rows: How many rows are in the table. Default 1.<br/>
- * columns: How many columns are in the table. Default 1.<br/>
- * header: Whether or not a thead is placed on the table. A thead counts as
- * one of your rows. Default false.
- *
  * @example
  * // Create a table with one row and one column.
  * var table = new jex.table();
@@ -39,6 +33,12 @@
  * var table = new jex.table({'rows': 4, 'columns': 2, 'header': true});
  *
  * @constructor
+ *
+ * @param {{rows: number, columns: number, header: boolean}} options
+ * rows: How many rows are in the table. Default 1.<br/>
+ * columns: How many columns are in the table. Default 1.<br/>
+ * header: Whether or not a thead is placed on the table. A thead counts as
+ * one of your rows. Default false.
  */
 jex.table = function(options) {
   var rows = options.rows || 1;
