@@ -19,7 +19,7 @@
  *
  * @link http://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
  *
- * @param {Object} object The object to get the type for.
+ * @param {*} object The object to get the type for.
  *
  * @return {string} The actual type of the object.
  */
@@ -32,6 +32,7 @@ jex.type = function(object) {
     return 'undefined';
   }
 
+  // This is at least twice as slow as Object.prototype.toString.call(object)
   var type = ({}).toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 
   // Because NaN is oddly a 'number'...
