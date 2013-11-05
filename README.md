@@ -12,5 +12,6 @@ JeX currently provides the following:
 * jex.placeholder - Input placeholder. If the browser supports this already, that implementation is used. Otherwise falls back to the JeX implementation.
 * jex.table - Table builder with some other useful functions.
 * jex.type - More advanced "typeof" with support for basic types like string, number, function, regex, etc.
+* jex.prettyprint - Prettyprinter for JavaScript objects. Similar to the native JSON prettyprinter but supports color schemes and doesn't lack support for older versions of IE like the native one does.
 
 See doc/index.html for usage details.
