@@ -4,7 +4,9 @@
 /**
  * Add placeholder text to an element. If the browser already natively
  * implements placeholder text, then that implementation takes precedence. This
- * does not support password or select fields.
+ * does not support password or select fields. Also does not work properly with
+ * regular HTML form submissions; element.value will return the placeholder
+ * text instead of an empty string.
  *
  * Tested:
  * <ul>
@@ -12,9 +14,7 @@
  * <li>IE 10 - OK</li>
  * </ul>
  *
- * @param {{class_name: string}} options
- * class_name: The name of the class to apply when the placeholder is active.
- * Default "jex_placeholder".
+ * @constructor
  *
  * @example
  * // Create an input and add a placeholder
@@ -35,7 +35,9 @@
  * placeholder.decorate(input);
  * placeholder.undecorate();
  *
- * @constructor
+ * @param {{class_name: string}} options
+ * class_name: The name of the class to apply when the placeholder is active.
+ * Default "jex_placeholder".
  */
 jex.placeholder = function(options) {
   if (options && options.class_name) {
