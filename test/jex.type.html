@@ -15,54 +15,158 @@
       var $ = rocket.extend(rocket.$, rocket);
       $.ready(function() {
         var object;
+        var i, j;
+        var iterations = 10000;
 
-        // number
-        object = 1;
-        jex.console.log([object, jex.type(object)]);
+        var tests = [
+          {
+            'type': 'null',
+            'name': 'null',
+            'object': null
+          },
+          {
+            'type': 'undefined',
+            'name': 'undefined',
+            'object': undefined
+          },
+          {
+            'type': 'number',
+            'name': 'NaN',
+            'object': NaN
+          },
+          {
+            'type': 'number',
+            'name': 'number (primitive)',
+            'object': 1
+          },
+          {
+            'type': 'number',
+            'name': 'number (object)',
+            'object': new Number(1)
+          },
+          {
+            'type': 'string',
+            'name': 'string (primitive)',
+            'object': ''
+          },
+          {
+            'type': 'string',
+            'name': 'string (object)',
+            'object': new String('')
+          },
+          {
+            'type': 'boolean',
+            'name': 'boolean true (primitive)',
+            'object': true
+          },
+          {
+            'type': 'boolean',
+            'name': 'boolean true (object)',
+            'object': new Boolean(true)
+          },
+          {
+            'type': 'boolean',
+            'name': 'boolean false (primitive)',
+            'object': false
+          },
+          {
+            'type': 'boolean',
+            'name': 'boolean false (object)',
+            'object': new Boolean(false)
+          },
+          {
+            'type': 'array',
+            'name': 'array (primitive)',
+            'object': []
+          },
+          {
+            'type': 'array',
+            'name': 'array (object)',
+            'object': new Array()
+          },
+          {
+            'type': 'object',
+            'name': 'object (primitive)',
+            'object': {}
+          },
+          {
+            'type': 'object',
+            'name': 'object (object)',
+            'object': new Object()
+          },
+          {
+            'type': 'function',
+            'name': 'function (primitive)',
+            'object': function() {}
+          },
+          {
+            'type': 'function',
+            'name': 'function (object)',
+            'object': new Function()
+          },
+          {
+            'type': 'regexp',
+            'name': 'regexp (primitive)',
+            'object': /foo/
+          },
+          {
+            'type': 'regexp',
+            'name': 'regexp (object)',
+            'object': new RegExp('foo')
+          },
+          {
+            'type': 'date',
+            'name': 'date',
+            'object': new Date()
+          }
+        ];
 
-        // string
-        object = 'foo';
-        jex.console.log([object, jex.type(object)]);
+        var iframe = document.createElement('iframe');
+        iframe.setAttribute('name', 'iframe');
+        document.body.appendChild(iframe);
 
-        // null
-        object = null;
-        jex.console.log([object, jex.type(object)]);
+        setTimeout(function () { // Because IE sucks
+          var script = window.frames[0].document.createElement('script');
+          script.type = 'text/javascript';
+          script.text = "parent.iframe_tests = [{'type': 'null','name': 'null','object': null},{'type': 'undefined','name': 'undefined','object': undefined},{'type': 'number','name': 'NaN','object': NaN},{'type': 'number','name': 'number (primitive)','object': 1},{'type': 'number','name': 'number (object)','object': new Number(1)},{'type': 'string','name': 'string (primitive)','object': ''},{'type': 'string','name': 'string (object)','object': new String('')},{'type': 'boolean','name': 'boolean true (primitive)','object': true},{'type': 'boolean','name': 'boolean true (object)','object': new Boolean(true)},{'type': 'boolean','name': 'boolean false (primitive)','object': false},{'type': 'boolean','name': 'boolean false (object)','object': new Boolean(false)},{'type': 'array','name': 'array (primitive)','object': []},{'type': 'array','name': 'array (object)','object': new Array()},{'type': 'object','name': 'object (primitive)','object': {}},{'type': 'object','name': 'object (object)','object': new Object()},{'type': 'function','name': 'function (primitive)','object': function() {}},{'type': 'function','name': 'function (object)','object': new Function()},{'type': 'regexp','name': 'regexp (primitive)','object': /foo/},{'type': 'regexp','name': 'regexp (object)','object': new RegExp('foo')},{'type': 'date','name': 'date','object': new Date()}];";
+          window.frames[0].document.body.appendChild(script);
 
-        // undefined
-        object = undefined;
-        jex.console.log([object, jex.type(object)]);
+          var detected_type;
 
-        // boolean
-        object = true;
-        jex.console.log([object, jex.type(object)]);
+          // Check same-frame types
+          for(var i = 0; i < tests.length; i++) {
+            detected_type = jex.type(tests[i].object);
+            if(detected_type !== tests[i].type) {
+              jex.console.error(tests[i].name + " has type '" + jex.type(tests[i].object) + "'");
+            }
+            else {
+              jex.console.log(tests[i].name + " has type '" + jex.type(tests[i].object) + "'");
+            }
+            jex.console.time('timer');
+            for(j = 0; j < iterations; j++) {
+              jex.type(tests[i].object);
+            }
+            jex.console.timeEnd('timer');
+          }
 
-        // boolean
-        object = false;
-        jex.console.log([object, jex.type(object)]);
+          // Check cross-frame types
+          for(var i = 0; i < window.iframe_tests.length; i++) {
+            detected_type = jex.type(window.iframe_tests[i].object, true);
+            if(detected_type !== window.iframe_tests[i].type) {
+              jex.console.error(window.iframe_tests[i].name + " has type '" + jex.type(window.iframe_tests[i].object) + "'");
+            }
+            else {
+              jex.console.log(window.iframe_tests[i].name + " has type '" + jex.type(window.iframe_tests[i].object) + "'");
+            }
+            jex.console.time('timer');
+            for(j = 0; j < iterations; j++) {
+              jex.type(window.iframe_tests[i].object);
+            }
+            jex.console.timeEnd('timer');
+          }
 
-        // regexp
-        object = /regexp/;
-        jex.console.log([object, jex.type(object)]);
+        }, 200);
 
-        // date
-        object = new Date();
-        jex.console.log([object, jex.type(object)]);
-
-        // object
-        object = {'foo': 'bar'};
-        jex.console.log([object, jex.type(object)]);
-
-        // array
-        object = [1, 2];
-        jex.console.log([object, jex.type(object)]);
-
-        // function
-        object = function() {};
-        jex.console.log([object, jex.type(object)]);
-
-        // nan
-        object = NaN;
-        jex.console.log([object, jex.type(object)]);
       });
     </script>
   </head>
