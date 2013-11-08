@@ -18,6 +18,18 @@
  * <li>IE 11 - Need to retest with optimizations</li>
  * </ul>
  *
+ * @example
+ * // Get the type of an object
+ * var type = jex.type(1);
+ * var type = jex.type(some_object);
+ *
+ * // Get the type of an object in another frame
+ * var type = jex.type(some_object_in_another_frame);
+ *
+ * // Get the type of an object in another frame
+ * // Set opt_respect_frames to true to optimize slightly when accessing across frames.
+ * var type = jex.type(some_object_in_another_frame, true);
+ *
  * @link http://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
  * @link http://perfectionkills.com/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
  *
