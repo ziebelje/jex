@@ -1,11 +1,10 @@
 
 
 /**
- * Returns the type of the provided object. It's pretty good but isn't
- * consistent cross-browser for odd things like window and doesn't support
- * custom types. It is, however, good for at least the following types, which
- * is what this function was designed for: null, undefined, boolean, number,
- * string, date, regexp, object, array, function.
+ * Returns the type of the provided object. This is optimized for speed and
+ * also supports object types across frames. It's good for the following
+ * types: array, boolean, date, function, number, null, object, regexp,
+ * string, undefined.
  *
  * Tested:
  * <ul>
@@ -45,10 +44,9 @@ jex.type = function(object, opt_respect_frames) {
     return 'undefined';
   }
 
-  // Can only use these shortcuts if frames aren't an issue. The dual checks
-  // ensure that objects initialized both of the following ways work:
-  // var foo = 'bar';
-  // var foo = new String('bar');
+  // Can only use these shortcuts if not accessing objects across frames. If you
+  // do use these across frames they just won't return and the generic
+  // Object.prototype check will still run.
   if (opt_respect_frames === false) {
     if (typeof object === 'string' || object instanceof String) {
       // var a = 'foo'

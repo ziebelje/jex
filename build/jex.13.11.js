@@ -255,30 +255,42 @@ jex.console.execute_ = function(console_function, console_arguments) {
 
 
 /**
- * Returns the type of the provided object. It's pretty good but isn't
- * consistent cross-browser for odd things like window and doesn't support
- * custom types. It is, however, good for at least the following types, which
- * is what this function was designed for: null, undefined, boolean, number,
- * string, date, regexp, object, array, function, nan.
+ * Returns the type of the provided object. This is optimized for speed and
+ * also supports object types across frames. It's good for the following
+ * types: array, boolean, date, function, number, null, object, regexp,
+ * string, undefined.
  *
  * Tested:
  * <ul>
  * <li>Chrome 30 - OK</li>
+ * <li>FF 22 - OK</li>
+ * <li>IE 6 - OK</li>
  * <li>IE 7 - OK</li>
  * <li>IE 8 - OK</li>
- * <li>IE 9 - OK</li>
+ * <li>IE 9 - Need to retest with optimizations</li>
  * <li>IE 10 - OK</li>
- * <li>IE 11 - OK</li>
+ * <li>IE 11 - Need to retest with optimizations</li>
  * </ul>
  *
  * @link http://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
+ * @link http://perfectionkills.com/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
  *
  * @param {*} object The object to get the type for.
+ * @param {boolean=} opt_respect_frames Basically whether or not you're passing
+ * objects around between different frames. Technically the function will work
+ * 100% correctly across frames even with this set to false; it will just run a
+ * tiny bit slower. Rudimentary benchmarks put it at mere milliseconds for
+ * 100,000 calls to this function (in Chrome 30).
  *
  * @return {string} The actual type of the object.
  */
-jex.type = function(object) {
-  // The generic type check doesn't work with null/undefined in IE8 or less.
+jex.type = function(object, opt_respect_frames) {
+  if (arguments.length === 1) {
+    opt_respect_frames = false;
+  }
+
+  // A couple shortcuts that always work. The generic type check doesn't work
+  // with null/undefined in IE8 or less.
   if (object === null) {
     return 'null';
   }
@@ -286,16 +298,119 @@ jex.type = function(object) {
     return 'undefined';
   }
 
-  // This is at least twice as slow sa Object.prototype.toString.call(object)
-  var type = ({}).toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+  // Can only use these shortcuts if not accessing objects across frames. If you
+  // do use these across frames they just won't return and the generic
+  // Object.prototype check will still run.
+  if (opt_respect_frames === false) {
+    if (typeof object === 'string' || object instanceof String) {
+      // var a = 'foo'
+      // var b = new String('foo')
+      // typeof a === 'string'
+      // typeof b === 'object'
+      // a instanceof String === false
+      // b instanceof String === true
+      return 'string';
+    }
+    else if (typeof object === 'number' || object instanceof Number) {
+      // var a = 1
+      // var b = new Number(1)
+      // typeof a === 'number'
+      // typeof b === 'object'
+      // a instanceof Number === false
+      // b instanceof Number === true
+      return 'number';
+    }
+    else if (typeof object === 'boolean' || object instanceof Boolean) {
+      // var a = true (works for false, too)
+      // var b = new Boolean(true)
+      // typeof a === 'boolean'
+      // typeof b === 'object'
+      // a instanceof Boolean === false
+      // b instanceof Boolean === true
+      return 'boolean';
+    }
+    else if (object instanceof Array) {
+      // var a = []
+      // var b = new Array()
+      // typeof a === 'object'
+      // typeof b === 'object'
+      // a instanceof Array === true
+      // b instanceof Array === true
+      return 'array';
+    }
+    else if (object instanceof Function) {
+      // var a = function() {}
+      // var b = new Function()
+      // typeof a === 'function'
+      // typeof b === 'function'
+      // a instanceof Function === true
+      // b instanceof Function === true
+      return 'function';
+    }
+    else if (object instanceof RegExp) {
+      // var a = /foo/
+      // var b = new RegExp('foo');
+      // typeof a === 'object'
+      // typeof b === 'object'
+      // a instanceof RegExp === true
+      // b instanceof RegExp === true
+      return 'regexp';
+    }
+    else if (object instanceof Date) {
+      // var b = new Date();
+      // typeof b === 'object'
+      // b instanceof Date === true
+      return 'date';
+    }
+  }
 
-  // Because NaN is oddly a 'number'...
-  if (type === 'number' && isNaN(object)) {
-    return 'nan';
+  // If none of the shortcuts were allowed/were valid, fall back to this slow
+  // method.
+  var type = Object.prototype.toString.call(object);
+
+  // Look up the type in the map and use it where possible. Trying to use the
+  // regular expression match is a good catch-all but makes this run twice as
+  // slow.
+  if (jex.type.map_[type]) {
+    return jex.type.map_[type];
   }
   else {
-    return type;
+    return type.match(jex.type.regexp_)[1].toLowerCase();
   }
+};
+
+
+/**
+ * Regular expression to extract the useful portion out of the toString()
+ * call. This is only used when the object type isn't found in jex.type.map
+ * because it's super slow.
+ *
+ * @private
+ *
+ * @type {RegExp}
+ */
+jex.type.regexp_ = /\s([a-zA-Z]+)/;
+
+
+/**
+ * Map of native object type strings to a nicer return format. This is used in
+ * preference over a regular expression match which vastly improves the speed.
+ *
+ * @private
+ *
+ * @type {Object.<string, string>}
+ */
+jex.type.map_ = {
+  '[object Array]': 'array',
+  '[object Boolean]': 'boolean',
+  '[object Date]': 'date',
+  '[object Function]': 'function',
+  '[object Number]': 'number',
+  '[object Null]': 'null',
+  '[object Object]': 'object',
+  '[object RegExp]': 'regexp',
+  '[object String]': 'string',
+  '[object Undefined]': 'undefined'
 };
 
 
@@ -564,7 +679,9 @@ jex.debug.listener.get_count = function() {
 /**
  * Add placeholder text to an element. If the browser already natively
  * implements placeholder text, then that implementation takes precedence. This
- * does not support password or select fields.
+ * does not support password or select fields. Also does not work properly with
+ * regular HTML form submissions; element.value will return the placeholder
+ * text instead of an empty string.
  *
  * Tested:
  * <ul>
@@ -572,9 +689,7 @@ jex.debug.listener.get_count = function() {
  * <li>IE 10 - OK</li>
  * </ul>
  *
- * @param {{class_name: string}} options
- * class_name: The name of the class to apply when the placeholder is active.
- * Default "jex_placeholder".
+ * @constructor
  *
  * @example
  * // Create an input and add a placeholder
@@ -595,7 +710,9 @@ jex.debug.listener.get_count = function() {
  * placeholder.decorate(input);
  * placeholder.undecorate();
  *
- * @constructor
+ * @param {{class_name: string}} options
+ * class_name: The name of the class to apply when the placeholder is active.
+ * Default "jex_placeholder".
  */
 jex.placeholder = function(options) {
   if (options && options.class_name) {
@@ -1048,24 +1165,21 @@ jex.prettyprint.prototype.display_line_numbers_;
 /**
  * Decorate the provided element with the prettyprinted object.
  *
- * @param {rocket.Elements} element
+ * @param {rocket.Elements} element The element to decorate.
  */
 jex.prettyprint.prototype.decorate = function(element) {
   var div = rocket.createElement('div');
   div.style({
     'padding': '5px',
+    'font-family': 'Consolas, "Courier New", Courier, Monospace',
     'background': this.color_scheme_['background'] || jex.prettyprint.default_background_color_
   });
 
   var table = rocket.createElement('table');
-  table.style({
-    'font-family': 'Consolas, "Courier New", Courier, Monospace',
-    'font-size': '14px'
-  })
-  .setAttribute({
-        'cellpadding': '0',
-        'cellspacing': '0'
-      });
+  table.setAttribute({
+    'cellpadding': '0',
+    'cellspacing': '0'
+  });
   var tbody = rocket.createElement('tbody');
 
   this.do_prettyprint_(this.object_, tbody);
