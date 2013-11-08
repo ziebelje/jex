@@ -197,18 +197,15 @@ jex.prettyprint.prototype.decorate = function(element) {
   var div = rocket.createElement('div');
   div.style({
     'padding': '5px',
+    'font-family': 'Consolas, "Courier New", Courier, Monospace',
     'background': this.color_scheme_['background'] || jex.prettyprint.default_background_color_
   });
 
   var table = rocket.createElement('table');
-  table.style({
-    'font-family': 'Consolas, "Courier New", Courier, Monospace',
-    'font-size': '14px'
-  })
-  .setAttribute({
-        'cellpadding': '0',
-        'cellspacing': '0'
-      });
+  table.setAttribute({
+    'cellpadding': '0',
+    'cellspacing': '0'
+  });
   var tbody = rocket.createElement('tbody');
 
   this.do_prettyprint_(this.object_, tbody);
