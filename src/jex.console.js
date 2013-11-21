@@ -139,6 +139,17 @@ jex.console.timeEnd = function(timer_name) {
 
 
 /**
+ * Wrapper for native console.clear().
+ *
+ * @see https://developers.google.com/chrome-developer-tools/docs/console-api#consoleclear
+ */
+jex.console.clear = function() {
+  jex.console.add_to_buffer_('clear', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
  * A buffer of console events that need to be flushed to the console when it
  * becomes available.
  *

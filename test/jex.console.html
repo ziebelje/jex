@@ -25,16 +25,28 @@
         $('#info').addEventListener('click', function() {
           jex.console.info('jex.console.info');
         });
+        $('#time').addEventListener('click', function() {
+          jex.console.time('timer');
+        });
+        $('#timeEnd').addEventListener('click', function() {
+          jex.console.timeEnd('timer');
+        });
+        $('#clear').addEventListener('click', function() {
+          jex.console.clear();
+        });
 
       });
     </script>
   </head>
   <body>
     <p>Click the buttons to trigger the specified console events.</p>
-    <button id="log">Log</button>
-    <button id="error">Error</button>
-    <button id="debug">Debug</button>
-    <button id="warn">Warn</button>
-    <button id="info">Info</button>
+    <button id="log">log</button>
+    <button id="error">error</button>
+    <button id="debug">debug</button>
+    <button id="warn">warn</button>
+    <button id="info">info</button>
+    <button id="time">time</button>
+    <button id="timeEnd">timeEnd</button>
+    <button id="clear">clear</button>
   </body>
 </html>
