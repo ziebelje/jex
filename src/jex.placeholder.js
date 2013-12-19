@@ -142,7 +142,7 @@ jex.placeholder.prototype.decorate = function(element) {
     );
 
     // Focus listener.
-    this.element_.addEventListener('focus.jex_placeholder',
+    this.element_.addEventListener('focus.jex.placeholder',
         /**
        * @this {HTMLInputElement}
        */
@@ -155,7 +155,7 @@ jex.placeholder.prototype.decorate = function(element) {
         });
 
     // Blur listener.
-    this.element_.addEventListener('blur.jex_placeholder',
+    this.element_.addEventListener('blur.jex.placeholder',
         /**
        * @this {HTMLInputElement}
        */
@@ -180,7 +180,7 @@ jex.placeholder.prototype.undecorate = function() {
 
     this.element_.dataset('jex_placeholder', 'false');
     this.element_
-      .removeEventListener('.jex_placeholder')
+      .removeEventListener('.jex.placeholder')
       .removeClass('jex_placeholder');
 
     if (this.element_.getAttribute('value') === this.placeholder_text_) {

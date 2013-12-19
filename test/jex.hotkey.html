@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+  <head>
+    <title>JeX - hotkey</title>
+    <script type="text/javascript" src="js/rocket.13.10.min.js"></script>
+    <script type="text/javascript" src="../src/jex.js"></script>
+    <script type="text/javascript" src="../src/jex.console.js"></script>
+    <script type="text/javascript" src="../src/jex.debug.js"></script>
+    <script type="text/javascript" src="../src/jex.debug.listener.js"></script>
+    <script type="text/javascript" src="../src/jex.hotkey.js"></script>
+    <script type="text/javascript" src="../src/jex.type.js"></script>
+    <script type="text/javascript">
+      var $ = rocket.extend(rocket.$, rocket);
+      $.ready(function() {
+        jex.debug.listener.render_count();
+
+        // valid modifiers = alt,ctrl,command,shift
+        var hotkeys = [
+          'a', // single letter
+          'j o n', // sequence
+          '* g', // symbol in a sequence
+          'ctrl+d', // ctrl modifier
+          'shift+a', // shift modifier
+          'alt+a', // alt modifier
+          'ctrl+shift+a', // ctrl, shift modifiers
+          'shift+ctrl+a', // shift, ctrl modifiers (testing for order. the last one should override)
+          'ctrl+alt+a', // ctrl, alt modifiers
+          'ctrl+shift+alt+a', // ctrl shift alt modifiers
+          'alt+shift+a', // alt, shift modifier
+          '*', // shift symbol
+          'shift+*', // shift symbol, shift (should not work)
+          'ctrl+b ctrl+b', // sequence with modifier
+          // '+', // plus character
+          'plus', // plus keyword
+          'l +', // plus character in a sequence
+          'm plus', // alternate plus representation
+          'command+b', // swap these and make sure ctrl triggers command and vice versa
+          // 'ctrl+b', // swap these and make sure ctrl triggers command and vice versa
+          'c  d', // extra spaces
+          '  e   f   ', // more extra spaces
+          'g space', // space character
+          'i+', // invalid
+          'j+k', // invalid
+          'shift+', // this only works with the numpad +
+          'ctrl', // just pushing a modifier key alone
+          'return', // testing return
+          'enter', // testing enter
+          'tab tab', // testing tab
+          'up up down down left right left right b a enter', // has to be done
+
+          // Groups
+          ['q', 'group_1'],
+          ['q', 'group_2'],
+
+          'notarealkey' // invalid
+        ];
+
+
+
+        for(var i = 0, len = hotkeys.length; i < len; ++i) {
+          (function(hotkey) {
+            if(jex.type(hotkey) === 'array') {
+              jex.hotkey.add(
+                hotkey[0],
+                function() {
+                  jex.console.log('GROUP HOTKEY ACTIVATED! "' + hotkey[0] + '" FROM GROUP "' + hotkey[1] + '"');
+                },
+                hotkey[1]
+              );
+            }
+            else {
+              jex.hotkey.add(hotkey, function() {
+                jex.console.log('HOTKEY ACTIVATED! "' + hotkey + '"');
+              });
+            }
+          })(hotkeys[i]);
+        }
+
+        // jex.hotkey.enable_group('group_1');
+        // jex.hotkey.enable_group('group_2');
+        jex.hotkey.enable_group(['group_1', 'group_2']);
+        // jex.hotkey.set_group('group_1');
+        jex.hotkey.disable_group('group_1');
+        jex.hotkey.disable_group('group_2');
+        // jex.hotkey.set_group('group_2');
+        // jex.hotkey.remove_group('group_2');
+        // jex.hotkey.remove_group('group_that_does_not_exist');
+        // jex.hotkey.set_group(['', 'group_1']);
+        // jex.hotkey.remove_all();
+        jex.hotkey.enable_group(['group_2', 'group_1']);
+
+        // jex.hotkey.remove('q');
+        // jex.hotkey.remove('q', 'group_1');
+        // jex.hotkey.remove_all();
+
+      });
+    </script>
+  </head>
+  <body>
+    <input type="text" id="input_text"/>
+  </body>
+</html>
