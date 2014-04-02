@@ -17,7 +17,7 @@
         table.td(2, 2).innerHTML('6');
         $('#static_table').appendChild(table.table());
 
-        table = new jex.table({'rows': 3, 'columns': 5, 'thead': true});
+        table = new jex.table({'rows': 3, 'columns': 5, 'header': true});
         table.table().setAttribute('border', '1');
         table.fill_row(0, ['this', 'is', 'the', 'thead', 'row']);
         table.fill_row(1, ['1', '2', '3', '4', '5']);

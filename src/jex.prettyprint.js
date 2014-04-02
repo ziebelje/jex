@@ -1,3 +1,4 @@
+//todo: change object type to * since it can really be anything, not just objects
 
 
 

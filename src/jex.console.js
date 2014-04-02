@@ -50,7 +50,7 @@ jex.console = {};
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/console.log
  *
- * @param {string} message The message to output to the console.
+ * @param {Object} message The message to output to the console.
  */
 jex.console.log = function(message) {
   jex.console.add_to_buffer_('log', arguments);
@@ -63,7 +63,7 @@ jex.console.log = function(message) {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/console.error
  *
- * @param {string} message The message to output to the console.
+ * @param {Object} message The message to output to the console.
  */
 jex.console.error = function(message) {
   jex.console.add_to_buffer_('error', arguments);
@@ -76,7 +76,7 @@ jex.console.error = function(message) {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/console.debug
  *
- * @param {string} message The message to output to the console.
+ * @param {Object} message The message to output to the console.
  */
 jex.console.debug = function(message) {
   jex.console.add_to_buffer_('debug', arguments);
@@ -89,7 +89,7 @@ jex.console.debug = function(message) {
  *
  * @see https://deveoper.mozilla.org/en-US/docs/Web/API/console.warn
  *
- * @param {string} message The message to output to the console.
+ * @param {Object} message The message to output to the console.
  */
 jex.console.warn = function(message) {
   jex.console.add_to_buffer_('warn', arguments);
@@ -102,7 +102,7 @@ jex.console.warn = function(message) {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/console.info
  *
- * @param {string} message The message to output to the console.
+ * @param {Object} message The message to output to the console.
  */
 jex.console.info = function(message) {
   jex.console.add_to_buffer_('info', arguments);

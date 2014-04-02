@@ -45,6 +45,10 @@ jex.table = function(options) {
   var columns = options.columns || 1;
 
   this.table_ = rocket.createElement('table');
+  this.table_.setAttribute({
+    'cellpadding': '0',
+    'cellspacing': '0'
+  });
   this.tbody_ = rocket.createElement('tbody');
   this.trs_ = [];
   this.tds_ = [];
@@ -104,7 +108,7 @@ jex.table.prototype.fill_row = function(row, data) {
   var column = 0;
   var len = data.length;
   for (; column < len; column++) {
-    this.td(row, column).innerHTML(data[column]);
+    this.td(column, row).innerHTML(data[column]);
   }
 };
 
@@ -142,14 +146,19 @@ jex.table.prototype.tr = function(row) {
 
 
 /**
- * Get the actual td element at the specified row/column index.
+ * Get the actual td element at the specified row/column index. The arguments
+ * are ordered such that x and y both increment moving outward to the right
+ * and down from the origin (top left).
  *
+ * @param {number} column The index of the column the td is located in.
  * @param {number} row The index of the row the td is located in. Includes the
  * header row.
- * @param {number} column The index of the column the td is located in.
  *
  * @return {rocket.Elements} The actual td element.
  */
-jex.table.prototype.td = function(row, column) {
+jex.table.prototype.td = function(column, row) {
+  // The arguments get swapped because it's more convenient to store tds as they
+  // get placed into the tr, which means they are organized somewhat counter-
+  // intuitively.
   return this.tds_[row][column];
 };

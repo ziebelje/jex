@@ -15,7 +15,7 @@
         jex.debug.listener.render_count();
 
         // valid modifiers = alt,ctrl,command,shift
-        var hotkeys = [
+/*        var hotkeys = [
           'a', // single letter
           'j o n', // sequence
           '* g', // symbol in a sequence
@@ -53,50 +53,76 @@
           ['q', 'group_2'],
 
           'notarealkey' // invalid
-        ];
+        ];*/
 
 
 
-        for(var i = 0, len = hotkeys.length; i < len; ++i) {
-          (function(hotkey) {
-            if(jex.type(hotkey) === 'array') {
-              jex.hotkey.add(
-                hotkey[0],
-                function() {
-                  jex.console.log('GROUP HOTKEY ACTIVATED! "' + hotkey[0] + '" FROM GROUP "' + hotkey[1] + '"');
-                },
-                hotkey[1]
-              );
-            }
-            else {
-              jex.hotkey.add(hotkey, function() {
-                jex.console.log('HOTKEY ACTIVATED! "' + hotkey + '"');
-              });
-            }
-          })(hotkeys[i]);
-        }
+        // for(var i = 0, len = hotkeys.length; i < len; ++i) {
+        //   (function(hotkey) {
+        //     if(jex.type(hotkey) === 'array') {
+        //       jex.hotkey.add(
+        //         hotkey[0],
+        //         function() {
+        //           jex.console.log('GROUP HOTKEY ACTIVATED! "' + hotkey[0] + '" FROM GROUP "' + hotkey[1] + '"');
+        //         },
+        //         hotkey[1]
+        //       );
+        //     }
+        //     else {
+        //       jex.hotkey.add(hotkey, function() {
+        //         jex.console.log('HOTKEY ACTIVATED! "' + hotkey + '"');
+        //       });
+        //     }
+        //   })(hotkeys[i]);
+        // }
 
         // jex.hotkey.enable_group('group_1');
         // jex.hotkey.enable_group('group_2');
-        jex.hotkey.enable_group(['group_1', 'group_2']);
+        // jex.hotkey.enable_group(['group_1', 'group_2']);
         // jex.hotkey.set_group('group_1');
-        jex.hotkey.disable_group('group_1');
-        jex.hotkey.disable_group('group_2');
+        // jex.hotkey.disable_group('group_1');
+        // jex.hotkey.disable_group('group_2');
         // jex.hotkey.set_group('group_2');
         // jex.hotkey.remove_group('group_2');
         // jex.hotkey.remove_group('group_that_does_not_exist');
         // jex.hotkey.set_group(['', 'group_1']);
         // jex.hotkey.remove_all();
-        jex.hotkey.enable_group(['group_2', 'group_1']);
+        // jex.hotkey.enable_group(['group_2', 'group_1']);
 
         // jex.hotkey.remove('q');
         // jex.hotkey.remove('q', 'group_1');
         // jex.hotkey.remove_all();
+        //
+        // jex.hotkey.add('a', function() { jex.console.log('hotkey - a'); });
+        jex.hotkey.add({
+          'hotkey': ['enter'],
+          'callback': function() { jex.console.log('hotkey'); },
+          // 'allow_any_input': true
+          // 'input': [$('#input_text'), $('#input_textarea')]
+          'input': $('#input_text')
+        });
+
+        jex.hotkey.add({
+          'hotkey': 'esc',
+          'callback': function() { jex.console.log('hotkey esc'); }
+        });
+
+        jex.hotkey.add({
+          'hotkey': 'esc insert ins escape esc',
+          'callback': function() { jex.console.log('hotkey esc'); }
+        });
 
       });
     </script>
   </head>
   <body>
-    <input type="text" id="input_text"/>
+    <input type="text" id="input_text"/><br/>
+    <textarea id="input_textarea"></textarea><br/>
+    <select id="input_select">
+      <option>foo</option>
+      <option>bar</option>
+      <option>apple</option>
+    </select>
+    <p contentEditable="true">editable paragraph content</p>
   </body>
 </html>

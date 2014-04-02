@@ -1400,21 +1400,18 @@ jex.prettyprint.prototype.render_value_ = function(value) {
   return span;
 };
 // todo:  ; :, = + and - _, have different values
-// todo: pause/unpause addings?
-// todo: ctrl/command support
-// todo: mac support
-// todo: add tests for all special keys and test across browsers
-// todo: meta key?
-// todo: do not fire inside input unless bound to that input (unless override so that ctrl+s always saves for example)
-// todo: event listener namespace (and ability to remove the event listener if not in use)
-// todo: namespace jex.hotkey instead of jex_hotkey? Also have another jex thing that has this.
+
+// todo: add meta key support (for mac and then windows key)
+
+// todo: make ctrl / command be treated the same
+
+// todo: allow binding hotkeys to specific editable fields or even allowing the
+// hotkey in all editable fields.
+
 // todo: replace map with String.fromCharCode() ?
 
 // todo: Modifier keys pressed on their own do not work. For example, I cannot
 // have a hotkey for 'shift' or use 'shift' in any sequence alone.
-
-// On the Macintosh, this is the Command key. On Microsoft Windows, this is the Windows key.
-// e.originalEvent.metaKey;
 
 
 /**
@@ -1485,6 +1482,16 @@ jex.hotkey.is_active_ = false;
  * @type {number}
  */
 jex.hotkey.sequence_timeout_ = 1000;
+
+
+/**
+ * Whether or not detection of hotkeys is paused.
+ *
+ * @private
+ *
+ * @type {boolean}
+ */
+jex.hotkey.paused_ = false;
 
 
 /**
@@ -1712,13 +1719,15 @@ jex.hotkey.add = function(hotkey, callback, group) {
 jex.hotkey.check_listener_ = function() {
   var need_listener = false;
 
-  // Loop over all of the currently active groups.
-  for (var i = 0, len = jex.hotkey.active_groups_.length; i < len; ++i) {
-    // If any of these groups have at least one hotkey in them, hotkey detection
-    // should be enabled.
-    if (rocket.keys(jex.hotkey.hotkeys_[jex.hotkey.active_groups_[i]]).length > 0) {
-      need_listener = true;
-      break;
+  if (jex.hotkey.paused_ === false) {
+    // Loop over all of the currently active groups.
+    for (var i = 0, len = jex.hotkey.active_groups_.length; i < len; ++i) {
+      // If any of these groups have at least one hotkey in them, hotkey detection
+      // should be enabled.
+      if (rocket.keys(jex.hotkey.hotkeys_[jex.hotkey.active_groups_[i]]).length > 0) {
+        need_listener = true;
+        break;
+      }
     }
   }
 
@@ -1736,6 +1745,23 @@ jex.hotkey.check_listener_ = function() {
     rocket.$(window).removeEventListener('.jex.hotkey');
     jex.hotkey.enabled_ = false;
   }
+};
+
+
+/**
+ * Pause detection of hotkeys. All groups and hotkey definitions will remain
+ * unchanged, they will just stop being detected.
+ */
+jex.hotkey.pause = function() {
+  jex.hotkey.paused_ = true;
+};
+
+
+/**
+ * Unpause detection of hotkeys.
+ */
+jex.hotkey.unpause = function() {
+  jex.hotkey.paused_ = false;
 };
 
 
@@ -1914,7 +1940,20 @@ jex.hotkey.normalize_ = function(hotkey) {
  */
 jex.hotkey.keydown_handler_ = function(e) {
   // jex.console.clear();
-  // jex.console.log(e.which.toString());
+  // jex.console.log(e);
+
+
+  // Don't allow hotkeys to work inside inputs.
+  var element = e.target;
+  if (
+      element.tagName === 'INPUT' ||
+      element.tagName === 'SELECT' ||
+      element.tagName === 'TEXTAREA' ||
+      element.isContentEditable === true
+  ) {
+    jex.hotkey.reset_();
+    return;
+  }
 
   // Since the e parameter has to be of type {Event} for internal reasons, even
   // though it's a {rocket.Event}, cast it back right here so I can get access
