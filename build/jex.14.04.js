@@ -1434,7 +1434,6 @@ jex.hotkey.add = function(options) {
     if (jex.hotkey.hotkeys_.hasOwnProperty(group) === false) {
       jex.hotkey.hotkeys_[group] = {};
     }
-    jex.console.log('adding "' + group + '"."' + hotkey + '"');
     jex.hotkey.hotkeys_[group][hotkey] = {
       'callback': callback,
       'inputs': inputs
