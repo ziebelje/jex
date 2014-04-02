@@ -521,7 +521,6 @@ jex.hotkey.remove_all = function() {
  * @return {string} The normalized hotkey.
  */
 jex.hotkey.normalize_ = function(hotkey) {
-  jex.console.log('normalizing "' + hotkey + '"');
   // Fix up provided hotkey a bit. This removes extra spaces in, before, and
   // after the hotkey and sets it to lowercase.
   hotkey = rocket.trim(hotkey).replace(/\s{2,}/g, ' ').toLowerCase();
@@ -555,8 +554,6 @@ jex.hotkey.normalize_ = function(hotkey) {
   hotkey = hotkey.replace('pgdn', 'pagedown');
   hotkey = hotkey.replace('pgdown', 'pagedown');
   hotkey = hotkey.replace('break', 'pause');
-
-  jex.console.log('normalized to "' + hotkey + '"');
 
   return hotkey;
 };
