@@ -48,7 +48,7 @@ jex.console = {};
 /**
  * Wrapper for native console.log().
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/console.log
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.log
  *
  * @param {Object} message The message to output to the console.
  */
@@ -61,7 +61,7 @@ jex.console.log = function(message) {
 /**
  * Wrapper for native console.error().
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/console.error
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.error
  *
  * @param {Object} message The message to output to the console.
  */
@@ -74,7 +74,7 @@ jex.console.error = function(message) {
 /**
  * Wrapper for native console.debug().
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/console.debug
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.debug
  *
  * @param {Object} message The message to output to the console.
  */
@@ -87,7 +87,7 @@ jex.console.debug = function(message) {
 /**
  * Wrapper for native console.warn().
  *
- * @see https://deveoper.mozilla.org/en-US/docs/Web/API/console.warn
+ * @link https://deveoper.mozilla.org/en-US/docs/Web/API/console.warn
  *
  * @param {Object} message The message to output to the console.
  */
@@ -100,7 +100,7 @@ jex.console.warn = function(message) {
 /**
  * Wrapper for native console.info().
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/console.info
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.info
  *
  * @param {Object} message The message to output to the console.
  */
@@ -114,7 +114,7 @@ jex.console.info = function(message) {
  * Wrapper for native console.time(). This will not work as desired if called
  * when a console does not exist and the call goes to the buffer.
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/console.time
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.time
  *
  * @param {string} timer_name The name of the timer.
  */
@@ -128,7 +128,7 @@ jex.console.time = function(timer_name) {
  * Wrapper for native console.timeEnd(). This will not work as desired if
  * called when a console does not exist and the call goes to the buffer.
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/console.time
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.time
  *
  * @param {string} timer_name The name of the timer.
  */
@@ -141,7 +141,7 @@ jex.console.timeEnd = function(timer_name) {
 /**
  * Wrapper for native console.clear().
  *
- * @see https://developers.google.com/chrome-developer-tools/docs/console-api#consoleclear
+ * @link https://developers.google.com/chrome-developer-tools/docs/console-api#consoleclear
  */
 jex.console.clear = function() {
   jex.console.add_to_buffer_('clear', arguments);
@@ -202,7 +202,7 @@ jex.console.flush_buffer_ = function() {
  * IE9 and below. That's what the type check is all about here. More info at
  *
  * Next up, this falls back to console.log when the function you called fails.
- * For example, IE 9 doesn't have console.debug so it will instead log so at
+ * For example, IE9 doesn't have console.debug so it will instead log so at
  * least something shows up in the console.
  *
  * @private

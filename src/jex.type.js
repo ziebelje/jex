@@ -10,7 +10,6 @@
  * <ul>
  * <li>Chrome 30 - OK</li>
  * <li>FF 22 - OK</li>
- * <li>IE 6 - OK</li>
  * <li>IE 7 - OK</li>
  * <li>IE 8 - OK</li>
  * <li>IE 9 - Need to retest with optimizations</li>

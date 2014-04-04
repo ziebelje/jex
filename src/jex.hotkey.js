@@ -14,6 +14,7 @@
 
 /**
  * @const
+ *
  * @namespace
  */
 jex.hotkey = {};
@@ -559,13 +560,16 @@ jex.hotkey.normalize_ = function(hotkey) {
 
 
 /**
- * [keydown_handler_ description]
+ * This handler executes when there are hotkeys to track on the page. It
+ * appends to the current hotkey and runs any associated callbacks if a hotkey
+ * was activated.
  *
  * @private
  *
- * @param {Event} e [description]
+ * @param {Event} e The event.
  */
 jex.hotkey.keydown_handler_ = function(e) {
+  // Not sure why I have to do this for closure. It should be able to know this.
   var target = /** @type {Element} */ (e.target);
 
   var target_is_input = (

@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <title>JeX - hashchange</title>
+    <script type="text/javascript" src="js/rocket.14.04.min.js"></script>
+    <script type="text/javascript" src="../src/jex.js"></script>
+    <script type="text/javascript" src="../src/jex.console.js"></script>
+    <script type="text/javascript" src="../src/jex.hashchange.js"></script>
+    <script type="text/javascript">
+      var $ = rocket.extend(rocket.$, rocket);
+      $.ready(function() {
+        var hashchange = new jex.hashchange();
+        hashchange.addEventListener('hashchange', function() {
+          jex.console.log('event triggered');
+        });
+      });
+    </script>
+  </head>
+  <body><button onclick="window.location.hash=Math.random();">Change</button></body>
+</html>

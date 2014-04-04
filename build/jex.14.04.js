@@ -74,7 +74,7 @@ jex.console = {};
 /**
  * Wrapper for native console.log().
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/console.log
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.log
  *
  * @param {Object} message The message to output to the console.
  */
@@ -87,7 +87,7 @@ jex.console.log = function(message) {
 /**
  * Wrapper for native console.error().
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/console.error
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.error
  *
  * @param {Object} message The message to output to the console.
  */
@@ -100,7 +100,7 @@ jex.console.error = function(message) {
 /**
  * Wrapper for native console.debug().
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/console.debug
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.debug
  *
  * @param {Object} message The message to output to the console.
  */
@@ -113,7 +113,7 @@ jex.console.debug = function(message) {
 /**
  * Wrapper for native console.warn().
  *
- * @see https://deveoper.mozilla.org/en-US/docs/Web/API/console.warn
+ * @link https://deveoper.mozilla.org/en-US/docs/Web/API/console.warn
  *
  * @param {Object} message The message to output to the console.
  */
@@ -126,7 +126,7 @@ jex.console.warn = function(message) {
 /**
  * Wrapper for native console.info().
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/console.info
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.info
  *
  * @param {Object} message The message to output to the console.
  */
@@ -140,7 +140,7 @@ jex.console.info = function(message) {
  * Wrapper for native console.time(). This will not work as desired if called
  * when a console does not exist and the call goes to the buffer.
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/console.time
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.time
  *
  * @param {string} timer_name The name of the timer.
  */
@@ -154,7 +154,7 @@ jex.console.time = function(timer_name) {
  * Wrapper for native console.timeEnd(). This will not work as desired if
  * called when a console does not exist and the call goes to the buffer.
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/console.time
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.time
  *
  * @param {string} timer_name The name of the timer.
  */
@@ -167,7 +167,7 @@ jex.console.timeEnd = function(timer_name) {
 /**
  * Wrapper for native console.clear().
  *
- * @see https://developers.google.com/chrome-developer-tools/docs/console-api#consoleclear
+ * @link https://developers.google.com/chrome-developer-tools/docs/console-api#consoleclear
  */
 jex.console.clear = function() {
   jex.console.add_to_buffer_('clear', arguments);
@@ -228,7 +228,7 @@ jex.console.flush_buffer_ = function() {
  * IE9 and below. That's what the type check is all about here. More info at
  *
  * Next up, this falls back to console.log when the function you called fails.
- * For example, IE 9 doesn't have console.debug so it will instead log so at
+ * For example, IE9 doesn't have console.debug so it will instead log so at
  * least something shows up in the console.
  *
  * @private
@@ -705,411 +705,6 @@ jex.debug.listener.get_count = function() {
   }
   return listener_count;
 };
-//todo: change object type to * since it can really be anything, not just objects
-
-
-
-/**
- * Nice prettyprinting of JavaScript objects to HTML. Supports color schemes
- * and otherwise produces output fairly similar to that of the native
- * JSON.prettyprint.
- *
- * Tested:
- * <ul>
- * <li>Chrome 30 - OK</li>
- * <li>FF 24 - OK</li>
- * <li>FF 25 - OK</li>
- * <li>IE 7 - At the very least, will not iterate over any keys in an object
- * with the key "constructor" as it's not enumerable and is reserved so it
- * doesn't change.</li>
- * <li>IE 8 - At the very least, will not iterate over any keys in an object
- * with the key "constructor" as it's not enumerable and is reserved so it
- * doesn't change.</li>
- * <li>IE 9 - OK</li>
- * <li>IE 10 - OK</li>
- * </ul>
- *
- * @example
- * // Prettyprint an object with the defaults.
- * var object = {'foo': 'bar'};
- * prettyprint = new jex.prettyprint({'object': object});
- * prettyprint.decorate($("#prettyprint"));
- *
- * @example
- * // Prettyprint an object with the light color scheme.
- * var object = {'foo': 'bar'};
- * prettyprint = new jex.prettyprint({'object': object, 'color_scheme': 'light'});
- * prettyprint.decorate($("#prettyprint"));
- *
- * @example
- * // Prettyprint an object with a custom color scheme.
- * var object = {'foo': 'bar'};
- * prettyprint = new jex.prettyprint({'object': object, 'color_scheme': {'string': 'blue'}});
- * prettyprint.decorate($("#prettyprint"));
- *
- * @example
- * // Prettyprint any type of object.
- * var object = {'number': 1, 'string': 'string', 'array': [1, 2, 3], 'object': {'a': 1, 'b': 2}};
- * prettyprint = new jex.prettyprint({'object': object});
- * prettyprint.decorate($("#prettyprint"));
- *
- * @param {{object: Object, color_scheme: (string|Object), display_line_numbers: boolean}} options
- * object: The object to prettyprint. Required.<br/>
- * color_scheme: The color scheme. Either 'light', 'dark', or an object with
- * the custom scheme. Default 'dark'.<br/>
- * display_line_numbers: Whether or not to display line numbers. Default true.
- *
- * @constructor
- */
-jex.prettyprint = function(options) {
-  this.object_ = options.object;
-
-  // Defaults
-  var color_scheme = options.color_scheme || 'dark';
-  if (options.display_line_numbers !== undefined) {
-    this.display_line_numbers_ = options.display_line_numbers;
-  }
-  else {
-    this.display_line_numbers_ = true;
-  }
-
-  // Default color scheme
-  this.color_scheme_ = {};
-  if (jex.type(color_scheme) === 'string') {
-    rocket.extend(
-        this.color_scheme_,
-        jex.prettyprint.color_schemes_[/** @type {string} */ (color_scheme)]
-    );
-  }
-  else {
-    rocket.extend(
-        this.color_scheme_,
-        /** @type {Object} */ (color_scheme)
-    );
-  }
-};
-
-
-/**
- * The number of spaces to indent for each level.
- *
- * @private
- *
- * @type {number}
- */
-jex.prettyprint.indent_amount_ = 2;
-
-
-/**
- * The color to use then a custom color scheme is used but a needed text color
- * is not specified.
- *
- * @private
- *
- * @type {string}
- */
-jex.prettyprint.default_text_color_ = '#000000';
-
-
-/**
- * The color to use then a custom color scheme is used but the background
- * color is unspecified.
- *
- * @private
- *
- * @type {string}
- */
-jex.prettyprint.default_background_color_ = '#ffffff';
-
-
-/**
- * A couple color schemes for quick use. Taken pretty much directly from
- * Sublime Text 2.
- *
- * @private
- *
- * @type {Object.<string, Object.<string, string>>}
- */
-jex.prettyprint.color_schemes_ = {
-  'dark': {
-    'background': '#272822',
-    'line_number': '#8f908a',
-    'key': '#f8f8f2',
-    'colon': '#75715e',
-    'string': '#e6db74',
-    'number': '#f92672',
-    'boolean': '#66d9ef',
-    'date': '#f92672',
-    'regexp': '#f92672',
-    'function': '#66d9ef',
-    'null': '#66d9ef',
-    'undefined': '#66d9ef',
-    'nan': '#66d9ef',
-    'default': '#f8f8f2'
-  },
-  'light': {
-    'background': '#ffffff',
-    'line_number': '#8f908a',
-    'key': '#272822',
-    'colon': '#75715e',
-    'string': '#baab21',
-    'number': '#f92672',
-    'boolean': '#66d9ef',
-    'date': '#f92672',
-    'regexp': '#f92672',
-    'function': '#66d9ef',
-    'null': '#66d9ef',
-    'undefined': '#66d9ef',
-    'nan': '#66d9ef',
-    'default': '#272822'
-  }
-};
-
-
-/**
- * The object to prettyprint.
- *
- * @private
- *
- * @type {Object}
- */
-jex.prettyprint.prototype.object_;
-
-
-/**
- * The current color scheme.
- *
- * @private
- *
- * @type {Object.<string, string>}
- */
-jex.prettyprint.prototype.color_scheme_;
-
-
-/**
- * Whether or not to show line numbers in the output.
- *
- * @private
- *
- * @type {boolean}
- */
-jex.prettyprint.prototype.display_line_numbers_;
-
-
-/**
- * Decorate the provided element with the prettyprinted object.
- *
- * @param {rocket.Elements} element The element to decorate.
- */
-jex.prettyprint.prototype.decorate = function(element) {
-  var div = rocket.createElement('div');
-  div.style({
-    'padding': '5px',
-    'font-family': 'Consolas, "Courier New", Courier, Monospace',
-    'background': this.color_scheme_['background'] || jex.prettyprint.default_background_color_
-  });
-
-  var table = rocket.createElement('table');
-  table.setAttribute({
-    'cellpadding': '0',
-    'cellspacing': '0'
-  });
-  var tbody = rocket.createElement('tbody');
-
-  this.do_prettyprint_(this.object_, tbody);
-
-  table.appendChild(tbody);
-  div.appendChild(table);
-  element.appendChild(div);
-};
-
-
-/**
- * Recurse over the object and prettyprint it by adding trs to the tbody.
- *
- * @private
- *
- * @param {Object} object The object to prettyprint.
- * @param {rocket.Elements} tbody The tbody to prettyprint into.
- * @param {number=} opt_current_indent The current indent level.
- * @param {number=} opt_line_number The current line number.
- *
- * @return {number} The next line number.
- */
-jex.prettyprint.prototype.do_prettyprint_ = function(object, tbody, opt_current_indent, opt_line_number) {
-  var current_indent = opt_current_indent || 0;
-  var line_number = opt_line_number || 1;
-
-  var tr, line_number_td, value_td;
-  if (jex.type(object) === 'array' || jex.type(object) === 'object') {
-    for (var key in object) {
-      if (object.hasOwnProperty(key)) {
-        tr = this.render_tr_(line_number++);
-
-        value_td = tr.lastElementChild();
-
-        tbody.appendChild(tr);
-
-        value_td.appendChild(this.render_key_(key, current_indent));
-        value_td.appendChild(this.render_colon_());
-
-        if (jex.type(object[key]) === 'array' || jex.type(object[key]) === 'object') {
-          line_number = this.do_prettyprint_(
-              object[key],
-              tbody,
-              current_indent + jex.prettyprint.indent_amount_,
-              line_number
-              );
-        }
-        else {
-          value_td.appendChild(this.render_value_(object[key]));
-        }
-      }
-    }
-  }
-  else {
-    tr = this.render_tr_(line_number++);
-
-    value_td = tr.lastElementChild();
-
-    tbody.appendChild(tr);
-
-    value_td.appendChild(this.render_value_(object));
-  }
-
-  return line_number;
-};
-
-
-/**
- * Render a tr element for the current row of data. This includes all
- * applicable tds.
- *
- * @private
- *
- * @param {number} line_number The line number for this tr.
- *
- * @return {rocket.Elements} The tr.
- */
-jex.prettyprint.prototype.render_tr_ = function(line_number) {
-  var tr = rocket.createElement('tr');
-
-  if (this.display_line_numbers_ === true) {
-    var line_number_td = rocket.createElement('td')
-      .style({'text-align': 'right'})
-      .setAttribute({'valign': 'top'});
-    line_number_td.appendChild(this.render_line_number_(line_number));
-    tr.appendChild(line_number_td);
-  }
-
-  var value_td = rocket.createElement('td');
-  tr.appendChild(value_td);
-
-  return tr;
-};
-
-
-/**
- * Render the line number.
- *
- * @private
- *
- * @param {number} line_number The line number.
- *
- * @return {rocket.Elements} The element containing the line number.
- */
-jex.prettyprint.prototype.render_line_number_ = function(line_number) {
-  var span = rocket.createElement('span');
-  span.innerHTML(line_number + '')
-    .style({
-        'margin-right': '15px',
-        'color': this.color_scheme_['line_number'] || jex.prettyprint.default_text_color_
-      });
-  return span;
-};
-
-
-/**
- * Render the object key at the specified indent level.
- *
- * @private
- *
- * @param {string} key The key for this element in the object.
- * @param {number} indent The indent level for this key.
- *
- * @return {rocket.Elements} The element containing the key.
- */
-jex.prettyprint.prototype.render_key_ = function(key, indent) {
-  var style = {
-    'color': this.color_scheme_['key'] || jex.prettyprint.default_text_color_
-  };
-  var span = rocket.createElement('span');
-  span.innerHTML(rocket.padLeft('', indent).replace(/ /g, '&nbsp;') + key)
-    .style(style);
-  return span;
-};
-
-
-/**
- * Render the colon to separate the key and the value
- *
- * @private
- *
- * @return {rocket.Elements} The element containing the colon.
- */
-jex.prettyprint.prototype.render_colon_ = function() {
-  var style = {
-    'color': this.color_scheme_['colon'] || jex.prettyprint.default_text_color_
-  };
-  var span = rocket.createElement('span');
-  span.innerHTML(': ')
-    .style(style);
-  return span;
-};
-
-
-/**
- * Render the value with the appropriate style per the color scheme.
- *
- * @private
- *
- * @param {Object} value The value.
- *
- * @return {rocket.Elements} The element containing the value.
- */
-jex.prettyprint.prototype.render_value_ = function(value) {
-  var type = jex.type(value);
-
-  var display_value = rocket.htmlEntities(value + '');
-  var style = {
-    'color': this.color_scheme_[type] || jex.prettyprint.default_text_color_
-  };
-
-  // A couple types have specialized values.
-  switch (type) {
-    case 'string':
-      display_value = '"' + display_value + '"';
-      break;
-    case 'null':
-      display_value = 'null';
-      style.fontStyle = 'italic';
-      break;
-    case 'undefined':
-      display_value = 'undefined';
-      style.fontStyle = 'italic';
-      break;
-    case 'nan':
-      display_value = 'NaN';
-      style.fontStyle = 'italic';
-      break;
-  }
-
-  var span = rocket.createElement('span');
-  span
-    .innerHTML(display_value)
-    .style(style);
-  return span;
-};
 // todo:  ; :, = + and - _, have different values
 
 // todo: add meta key support (for mac and then windows key)
@@ -1126,6 +721,7 @@ jex.prettyprint.prototype.render_value_ = function(value) {
 
 /**
  * @const
+ *
  * @namespace
  */
 jex.hotkey = {};
@@ -1671,11 +1267,13 @@ jex.hotkey.normalize_ = function(hotkey) {
 
 
 /**
- * [keydown_handler_ description]
+ * This handler executes when there are hotkeys to track on the page. It
+ * appends to the current hotkey and runs any associated callbacks if a hotkey
+ * was activated.
  *
  * @private
  *
- * @param {Event} e [description]
+ * @param {Event} e The event.
  */
 jex.hotkey.keydown_handler_ = function(e) {
   var target = /** @type {Element} */ (e.target);
@@ -1829,439 +1427,111 @@ jex.hotkey.reset_ = function() {
 
 
 /**
- * This class is used to send API requests to a Cora API. It handles building
- * the API call and can optionally execute a callback in the event of a
- * success/failure.
+ * This provides a cross-browser way of watching for the hashchange event.
+ * Modern browsers with support for onhashchange will use their
+ * implementation, while older browsers will use polling every 100ms. Support
+ * for back/forward in older browsers is also baked in.
+ *
+ * Note: Support for IE running in compatibility mode or legacy browser modes
+ * is hit and miss. This works down to IE6 as long as you're not doing that.
+ *
+ * @example var hashchange = new jex.hashchange();
+ * hashchange.addEventListener('hashchange', function() { // Do something. });
+ *
+ * @extends {rocket.EventTarget}
  *
  * @constructor
  */
-jex.cora_request = function() {
-  this.api_calls_ = [];
-  this.xhr_ = new rocket.XMLHttpRequest();
-};
-
-
-/**
- * A list of API calls to make in this request. More than one here will send a
- * multi API-call request.
- *
- * @private
- *
- * @type {Array}
- */
-jex.cora_request.prototype.api_calls_;
-
-
-/**
- * The XHR object to use for this request.
- *
- * @private
- *
- * @type {rocket.XMLHttpRequest}
- */
-jex.cora_request.prototype.xhr_;
-
-
-/**
- * Function to call upon success.
- *
- * @private
- *
- * @type {Function}
- */
-jex.cora_request.prototype.success_callback_;
-
-
-/**
- * Function to call upon failure.
- *
- * @private
- *
- * @type {Function}
- */
-jex.cora_request.prototype.error_callback_;
-
-
-/**
- * Time API request execution began.
- *
- * @private
- *
- * @type {Date}
- */
-jex.cora_request.prototype.execution_start_;
-
-
-/**
- * Time API request execution ended.
- *
- * @private
- *
- * @type {Date}
- */
-jex.cora_request.prototype.execution_end_;
-
-
-/**
- * The API URI. Hardcode this to wherever the API is at.
- *
- * @private
- *
- * @type {string}
- */
-jex.cora_request.api_uri_;
-
-
-/**
- * The API Key. Hardcode this to the API key.
- *
- * @private
- *
- * @type {string}
- */
-jex.cora_request.api_key_;
-
-
-/**
- * Add an API call to this request. If more than one is added, this will
- * become a batch request.
- *
- * @param {string} resource The resource.
- * @param {string} method The method.
- * @param {Object=} opt_arguments The arguments.
- * @param {string=} opt_alias The alias.
- *
- * @return {jex.cora_request.api_call} The API call that was actually added.
- */
-jex.cora_request.prototype.add_api_call = function(resource, method, opt_arguments, opt_alias) {
-  var api_call = new jex.cora_request.api_call(resource, method, opt_alias);
-  if (opt_arguments) {
-    api_call.set_arguments(opt_arguments);
-  }
-  this.api_calls_.push(api_call);
-  return api_call;
-};
-
-
-/**
- * Remove a specific API call from this API request. In general only useful if
- * you have a particular reason why this changed API request should override
- * whatever request you previously sent.
- *
- * @param {jex.cora_request.api_call} api_call The api_call to remove.
- */
-jex.cora_request.prototype.remove_api_call = function(api_call) {
-  this.api_calls_.splice(rocket.indexOf(this.api_calls_, api_call), 1);
-};
-
-
-/**
- * Remove all API calls from this API request. In general only useful if
- * you have a particular reason why this changed API request should override
- * whatever request you previously sent.
- */
-jex.cora_request.prototype.remove_all_api_calls = function() {
-  this.api_calls_ = [];
-};
-
-
-/**
- * Send this API request to the server. It will grab whatever the current API
- * calls are so you can technically send the same request twice but have it be
- * different. The benefit here is that if you re-use the same request it will
- * cancel the previouslly sent request if it is not complete. This means that
- * if you send two API calls from an autocomplete field really quickly, you
- * can guarantee that the second request will cancel the first one so the
- * callbacks on the first API request do not get executed after the second one
- * if that API request happens to take longer.
- */
-jex.cora_request.prototype.send = function() {
+jex.hashchange = function() {
   var self = this;
 
-  // Reset times so they are gone in case of error.
-  delete this.execution_start_;
-  delete this.execution_end_;
+  // Start things off the same.
+  this.hash_ = location.hash;
 
-  this.xhr_.data = {};
-  if (this.api_calls_.length === 1) {
-    rocket.extend(this.xhr_.data, this.api_calls_[0].get_object());
-  }
-  else {
-    this.xhr_.data.batch = [];
-    for (var i = 0, len = this.api_calls_.length; i < len; ++i) {
-      // Auto-set the alias if it was not provided for a batch API call.
-      if (!this.api_calls_[i].get_alias()) {
-        this.api_calls_[i].set_alias(this.api_calls_[i].get_resource() + '.' + this.api_calls_[i].get_method());
-      }
-      this.xhr_.data.batch.push(this.api_calls_[i].get_object());
-    }
-    this.xhr_.data.batch = rocket.JSON.stringify(this.xhr_.data.batch);
+  // http://tanalin.com/en/articles/ie-version-js/
+  if (document.all && !document.querySelector) { // IE7 and lower
+    this.iframe_ = rocket.createElement('iframe');
+    rocket.$('body').appendChild(this.iframe_);
+    this.iframe_
+    // .hide()
+      .setAttribute({
+          'src': 'javascript:void(0)'
+        });
   }
 
-  this.xhr_.data.api_key = jex.cora_request.api_key_;
-  this.xhr_.open('POST', jex.cora_request.api_uri_);
-  this.xhr_.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-  this.xhr_.addEventListener('success', function() {
-    self.execution_end_ = new Date();
-    try {
-      var response = rocket.JSON.parse(this.responseText);
-    }
-    catch (e) {
-      jex.console.error('API call failed (could not decode JSON)');
-      if (self.error_callback_) {
-        self.error_callback_({'response_text': this.responseText});
-        return;
-      }
-    }
-
-    if (response.success === false) {
-      jex.console.error('API call failed (success false)');
-      if (self.error_callback_) {
-        self.error_callback_({'data': response.data});
-      }
-    }
-    else {
-      if (self.success_callback_) {
-        self.success_callback_(response.data);
-      }
-    }
-  });
-
-  this.xhr_.addEventListener('error', function() {
-    jex.console.error('API call failed (status not 200)');
-    self.execution_end_ = new Date();
-    if (self.error_callback_) {
-      self.error_callback_({'response_text': this.responseText});
-    }
-  });
-
-  this.execution_start_ = new Date();
-  this.xhr_.send();
-};
-
-
-/**
- * Aborts the current request. Callbacks will not fire but the server will
- * continue executing whatever it wants.
- */
-jex.cora_request.prototype.abort = function() {
-  this.xhr_.abort();
-};
-
-
-/**
- * Get the API call execution time in milliseconds
- * @return {[type]} [description]
- */
-jex.cora_request.prototype.get_execution_time = function() {
-  if (this.execution_end_ && this.execution_start_) {
-    return this.execution_end_.getTime() - this.execution_start_.getTime();
-  }
-  else {
-    return null; // todo: throw an error?
+  // http://stackoverflow.com/a/4030510
+  if ('onhashchange' in window) {
+    window.onhashchange = function() {
+      self.dispatchEvent('hashchange');
+    };
+  } else {
+    rocket.setInterval(function() {
+      self.check_();
+    }, 1000);
   }
 };
+rocket.inherits(jex.hashchange, rocket.EventTarget);
 
 
 /**
- * Set the success callback function.
+ * The iFrame used to enable the back/forward buttons in IE7 and before.
  *
- * @param {Function} success_callback The function to call if the API request
- * succeeded. A single data argument will be passed to the callback that
- * contains the data key from the response.
+ * @private
+ *
+ * @type {rocket.Elements}
  */
-jex.cora_request.prototype.set_success_callback = function(success_callback) {
-  this.success_callback_ = success_callback;
-};
+jex.hashchange.prototype.iframe_;
 
 
 /**
- * Set the error callback function.
- *
- * @param {Function} error_callback The function to call if the API request
- * failed. A single data argument will be passed to the callback that contains
- * the data key from the response.
- */
-jex.cora_request.prototype.set_error_callback = function(error_callback) {
-  this.error_callback_ = error_callback;
-};
-
-
-/**
- * Set the API URI.
- *
- * @param {string} api_uri The API URI to set.
- */
-jex.cora_request.set_api_uri = function(api_uri) {
-  jex.cora_request.api_uri_ = api_uri;
-};
-
-
-/**
- * Set the API Key.
- *
- * @param {string} api_key The API Key to set.
- */
-jex.cora_request.set_api_key = function(api_key) {
-  jex.cora_request.api_key_ = api_key;
-};
-
-
-
-/**
- * This is a super-basic API call class that basically just holds data for the
- * POST parameters and exposes a method to make it easy to change the
- * arguments.
- *
- * @param {string} resource The resource.
- * @param {string} method The method.
- * @param {string|undefined=} opt_alias The alias.
- *
- * @constructor
- */
-jex.cora_request.api_call = function(resource, method, opt_alias) {
-  this.resource_ = resource;
-  this.method_ = method;
-  this.alias_ = opt_alias;
-};
-
-
-/**
- * Resource.
+ * The current hash. This is only used when polling manually for changes as a
+ * way to compare the existing hash with the hash on the window.
  *
  * @private
  *
  * @type {string}
  */
-jex.cora_request.prototype.resource_;
+jex.hashchange.prototype.hash_;
 
 
 /**
- * Method.
+ * Check to see if the hash on the window changed. If so, trigger the
+ * hashchange event. For older browsers, look at the hash on the iFrame as
+ * well since that's what changes when navigation occurs.
  *
  * @private
- *
- * @type {string}
  */
-jex.cora_request.prototype.method_;
-
-
-/**
- * Alias.
- *
- * @private
- *
- * @type {string}
- */
-jex.cora_request.prototype.alias_;
-
-
-/**
- * Arguments.
- *
- * @private
- *
- * @type {Object}
- */
-jex.cora_request.prototype.arguments_;
-
-
-/**
- * Set the arguments.
- *
- * @param {Object} args The arguments. With Cora, all arguments are
- * objects/associative arrays.
- */
-jex.cora_request.api_call.prototype.set_arguments = function(args) {
-  this.arguments_ = args;
-};
-
-
-/**
- * Set the alias.
- *
- * @param {string} alias The API call alias.
- */
-jex.cora_request.api_call.prototype.set_alias = function(alias) {
-  this.alias_ = alias;
-};
-
-
-/**
- * Get the alias.
- *
- * @return {string} alias The API call alias.
- */
-jex.cora_request.api_call.prototype.get_alias = function() {
-  return this.alias_;
-};
-
-
-/**
- * Get the resource.
- *
- * @return {string} resource The API call resource.
- */
-jex.cora_request.api_call.prototype.get_resource = function() {
-  return this.resource_;
-};
-
-
-/**
- * Get the method.
- *
- * @return {string} method The API call method.
- */
-jex.cora_request.api_call.prototype.get_method = function() {
-  return this.method_;
-};
-
-
-/**
- * Return the API call object prepped and ready to send to Cora. This excludes
- * the alias and arguments if not set because they are not strictly required.
- *
- * @return {Object} An object representing the API call.
- */
-jex.cora_request.api_call.prototype.get_object = function() {
-  var object = {
-    'resource': this.resource_,
-    'method': this.method_
-  };
-
-  if (this.alias_) {
-    object.alias = this.alias_;
+jex.hashchange.prototype.check_ = function() {
+  if (location.hash !== this.hash_) {
+    this.set_(location.hash);
+    this.dispatchEvent('hashchange');
   }
-
-  if (this.arguments_) {
-    object.arguments = rocket.JSON.stringify(this.arguments_);
-  }
-
-  return object;
-};
-
-
-/**
- * Get or set cookie.
- *
- * @param {string} name The name of the cookie to get.
- * @param {string} value The value to set.
- *
- * @link http://stackoverflow.com/questions/5639346/shortest-function-for-reading-a-cookie-in-javascript
- *
- * @return {string} The value stored in that cookie.
- */
-jex.cookie = function(name, value) {
-  if (arguments.length === 1) {
-    var nameEQ = name + '=';
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-      var c = ca[i];
-      while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-      if (c.indexOf(nameEQ) == 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+  else if (this.iframe_) {
+    var iframe = /** @type {!HTMLIFrameElement} */ (this.iframe_[0]);
+    if (iframe.contentWindow.location.hash !== this.hash_) {
+      this.set_(iframe.contentWindow.location.hash);
+      this.dispatchEvent('hashchange');
     }
-    return null;
+  }
+};
+
+
+/**
+ * Set the internally stored hash (used for comparison when polling for
+ * changes) as well as the has stored inside the iFrame.
+ *
+ * @private
+ *
+ * @param {string} hash The hash to set.
+ */
+jex.hashchange.prototype.set_ = function(hash) {
+  this.hash_ = hash;
+  if (this.iframe_) {
+    // Closure needed some help...
+    var iframe = /** @type {!HTMLIFrameElement} */ (this.iframe_[0]);
+    /** @type {!HTMLDocument} */ (iframe.contentWindow.document).open();
+    /** @type {!HTMLDocument} */ (iframe.contentWindow.document).close();
+    iframe.contentWindow.location.hash = hash;
   }
 };
 
