@@ -275,7 +275,6 @@ jex.console.execute_ = function(console_function, console_arguments) {
  * <ul>
  * <li>Chrome 30 - OK</li>
  * <li>FF 22 - OK</li>
- * <li>IE 6 - OK</li>
  * <li>IE 7 - OK</li>
  * <li>IE 8 - OK</li>
  * <li>IE 9 - Need to retest with optimizations</li>
@@ -1276,6 +1275,7 @@ jex.hotkey.normalize_ = function(hotkey) {
  * @param {Event} e The event.
  */
 jex.hotkey.keydown_handler_ = function(e) {
+  // Not sure why I have to do this for closure. It should be able to know this.
   var target = /** @type {Element} */ (e.target);
 
   var target_is_input = (
@@ -1434,6 +1434,17 @@ jex.hotkey.reset_ = function() {
  *
  * Note: Support for IE running in compatibility mode or legacy browser modes
  * is hit and miss. This works down to IE6 as long as you're not doing that.
+ *
+ * Tested:
+ * <ul>
+ * <li>Chrome 33 - ?</li>
+ * <li>FF 22 - ?</li>
+ * <li>IE 7 - ?</li>
+ * <li>IE 8 - ?</li>
+ * <li>IE 9 - ?</li>
+ * <li>IE 10 - ?</li>
+ * <li>IE 11 - ?</li>
+ * </ul>
  *
  * @example var hashchange = new jex.hashchange();
  * hashchange.addEventListener('hashchange', function() { // Do something. });
