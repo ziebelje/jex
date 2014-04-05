@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+    <title>JeX - ie</title>
+    <script type="text/javascript" src="js/rocket.14.04.min.js"></script>
+    <script type="text/javascript" src="../src/jex.js"></script>
+    <script type="text/javascript" src="../src/ie.js"></script>
+    <script type="text/javascript">
+      var $ = rocket.extend(rocket.$, rocket);
+      $.ready(function() {
+        var version = jex.ie.get_version();
+        if(version) {
+          $('body').innerHTML('IE' + jex.ie.get_version());
+        }
+        else {
+          $('body').innerHTML('Not IE or IE11+');
+        }
+      });
+    </script>
+  </head>
+  <body></body>
+</html>

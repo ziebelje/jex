@@ -35,7 +35,7 @@ jex.hashchange = function() {
   this.hash_ = location.hash;
 
   // http://tanalin.com/en/articles/ie-version-js/
-  if (document.all && !document.querySelector) { // IE7 and lower
+  if (jex.ie.less_than(8) === true) {
     this.iframe_ = rocket.createElement('iframe');
     rocket.$('body').appendChild(this.iframe_);
     this.iframe_
