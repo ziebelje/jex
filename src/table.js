@@ -102,13 +102,21 @@ jex.table.prototype.render_tr_ = function(columns, cell_type) {
  * Fills a row in the table with the given data.
  *
  * @param {number} row The index of the row to fill in.
- * @param {Array.<string>} data The data to put in the row.
+ * @param {Array.<string>|Array.<(Element|Array.<Element>|rocket.Elements)>}
+ * data The data to put in the row.
  */
 jex.table.prototype.fill_row = function(row, data) {
   var column = 0;
   var len = data.length;
   for (; column < len; column++) {
-    this.td(column, row).innerHTML(data[column]);
+    if (jex.type(data) === 'object') {
+      // Allow placing of elements directly into the td.
+      this.td(column, row).innerHTML('');
+      this.td(column, row).appendChild(data);
+    }
+    else {
+      this.td(column, row).innerHTML(data[column]);
+    }
   }
 };
 
