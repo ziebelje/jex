@@ -26,8 +26,7 @@ jex.hotkey = {};
  *
  * @private
  *
- * @type {Object.<string, Object.<string, {callback: Function, inputs:
- * Array.<Element>}>>}
+ * @type {Object.<string, Object.<string, {callback: Function, inputs: Array.<Element>}>>}
  */
 jex.hotkey.hotkeys_ = {};
 

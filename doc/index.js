@@ -13,6 +13,20 @@ rocket.ready(function() {
     }
   }
 
+  var lex = function(parent, code) {
+    var pre = $.createElement('pre').style(style.code);
+    var results = rocket.lexeme(code);
+    for(var j = 0; results[j]; ++j){
+      var span = $.createElement('span');
+      if (style[results[j].type]) {
+        span.style(style[results[j].type]);
+      }
+      span.innerHTML($.htmlEntities(results[j].value));
+      pre.appendChild(span);
+    }
+    parent.appendChild(pre);
+  };
+
   var style = {};
 
   style.font_family = 'consolas,"courier new",monospace';
@@ -37,7 +51,7 @@ rocket.ready(function() {
   };
   style.code = {
     'font-family': style.font_family,
-    'margin': 10
+    'padding': 10
   };
   style.comment = {
     'color': 'green'
@@ -86,6 +100,15 @@ rocket.ready(function() {
     for (var i = 0; docs[name].children[i]; ++i) {
       this.render_link(parent, docs[docs[name].children[i]]);
     }
+  };
+
+  left.test_runner = function(){
+    left.apply(this, arguments);
+  };
+  $.inherits(left.test_runner, left);
+  left.test_runner.prototype.legend = 'Test Runner';
+  left.test_runner.prototype.render_links = function(parent) {
+    parent.appendChild($.createElement('div').addClass('name,test_runner').dataset('name',this.name).style({'cursor':'pointer'}).innerHTML(this.name));
   };
 
   left.parents = function(){
@@ -226,10 +249,10 @@ rocket.ready(function() {
   $.inherits(contents.returns, contents);
   contents.returns.prototype.legend = 'Return Value';
   contents.returns.prototype.render_contents = function(parent) {
-    if (docs[this.name].tags.return) {
-      for (var i = 0; docs[this.name].tags.return[i]; ++i) {
-        parent.appendChild($.createElement('div').style(style.type).style({'margin': 10}).innerHTML($.htmlEntities(docs[this.name].tags.return[i].type)));
-        parent.appendChild($.createElement('div').style(style.human).innerHTML(docs[this.name].tags.return[i].description));
+    if (docs[this.name].tags['return']) {
+      for (var i = 0; docs[this.name].tags['return'][i]; ++i) {
+        parent.appendChild($.createElement('div').style(style.type).style({'margin': 10}).innerHTML($.htmlEntities(docs[this.name].tags['return'][i].type)));
+        parent.appendChild($.createElement('div').style(style.human).innerHTML(docs[this.name].tags['return'][i].description));
       }
     }
   };
@@ -255,17 +278,50 @@ rocket.ready(function() {
   contents.examples.prototype.render_contents = function(parent) {
     if (docs[this.name].tags.example) {
       for (var i = 0; docs[this.name].tags.example[i]; ++i) {
-        var pre = $.createElement('pre').style(style.code);
-        var results = rocket.lexeme(docs[this.name].tags.example[i]);
-        for(var j = 0; results[j]; ++j){
-          var span = $.createElement('span');
-          if (style[results[j].type]) {
-            span.style(style[results[j].type]);
-          }
-          span.innerHTML($.htmlEntities(results[j].value));
-          pre.appendChild(span);
+        lex(parent, docs[this.name].tags.example[i]);
+      }
+    }
+  };
+
+  contents.source = function(){
+    contents.apply(this, arguments);
+  };
+  $.inherits(contents.source, contents);
+  contents.source.prototype.legend = 'Source';
+  contents.source.prototype.render_contents = function(parent) {
+    parent.appendChild($.createElement('a').setAttribute({
+      'href': '../src/' + docs[this.name].file_name
+    }).innerHTML('Download'));
+    if (docs[this.name].source) {
+      lex(parent, docs[this.name].source);
+    }
+  };
+
+  contents.tests = function(){
+    contents.apply(this, arguments);
+  };
+  $.inherits(contents.tests, contents);
+  contents.tests.prototype.legend = 'Unit Tests';
+  contents.tests.prototype.render_contents = function(parent) {
+    if (docs[this.name].tags.test) {
+      for (var i = 0; docs[this.name].tags.test[i]; ++i) {
+        var test = eval(docs[this.name].tags.test[i].code);
+        var result = eval('('+docs[this.name].tags.test[i].result+')');
+        var pass = $.equal(test, result);
+        var container = $.createElement('div').style({'padding': 10});
+        var description = (docs[this.name].tags.test[i].description ? (' ('+docs[this.name].tags.test[i].description+')') : '');
+        container.appendChild($.createElement('div').style(style.type).innerHTML('Test # ' + (i + 1) + description));
+        lex(container, docs[this.name].tags.test[i].code);
+        container.appendChild($.createElement('div').style(style.type).innerHTML('Result'));
+        if (pass) {
+          lex(container, docs[this.name].tags.test[i].result);
+        } else {
+          lex(container, $.JSON.stringify(test));
+          container.style({'background-color': 'red'});
+          container.appendChild($.createElement('div').style(style.type).innerHTML('Expected'));
+          lex(container, $.JSON.stringify(result));
         }
-        parent.appendChild(pre);
+        parent.appendChild(container);
       }
     }
   };
@@ -328,12 +384,13 @@ rocket.ready(function() {
 
 
   var layer = function(name) {
-    this.name = document.title = name || 'jex';
+    this.name = document.title = name && name.split('/')[0] || 'jex';
+    this.test_runner = name.split('/')[1];
   };
   layer.previous_layer;
   layer.prototype.name;
   layer.prototype.render = function() {
-    window.location.hash = '#' + this.name;
+    window.location.hash = '#' + this.name + (this.test_runner ? '/test_runner' : '');
 
     var table = $.table(2, 2).setAttribute({'cellspacing': 1, 'cellpadding': 10}).style({'background-color': '#CCCCCC', 'height': '100%'});
 
@@ -349,7 +406,12 @@ rocket.ready(function() {
     this.render_header(table.trs[0].tds[1]);
 
     table.trs[1].tds[1].setAttribute({'valign': 'top'});
-    this.render_contents(table.trs[1].tds[1]);
+
+    if (this.test_runner) {
+      this.render_test_runner(table.trs[1].tds[1]);
+    } else {
+      this.render_contents(table.trs[1].tds[1]);
+    }
 
     if (layer.previous_layer) {
       $('body').replaceChild(table, layer.previous_layer);
@@ -366,6 +428,7 @@ rocket.ready(function() {
   };
   layer.prototype.render_left = function(parent) {
 
+    (new left.test_runner(this.name)).render(parent);
     (new left.parents(this.name)).render(parent);
     (new left.namespaces(this.name)).render(parent);
     (new left.interfaces(this.name)).render(parent);
@@ -406,10 +469,84 @@ rocket.ready(function() {
     (new contents.prototypes(this.name)).render(parent);
     (new contents.types(this.name)).render(parent);
     (new contents.returns(this.name)).render(parent);
-    (new contents.examples(this.name)).render(parent);
     (new contents.sees(this.name)).render(parent);
+    (new contents.examples(this.name)).render(parent);
     (new contents.links(this.name)).render(parent);
+    (new contents.tests(this.name)).render(parent);
+    (new contents.source(this.name)).render(parent);
   };
+  layer.prototype.render_test_runner = function(parent) {
+    (new test_runner(parent, this.name));
+  };
+
+  var test_runner = function(parent, this_name) {
+    var total_pass = 0;
+    var total_fail = 0;
+    var total_total = 0;
+    var total_start = $.now();
+    for (var name in docs) {
+      if (
+        docs[name].tags.test &&
+        (this_name === 'jex' || docs[name].parent === this_name || name === this_name)
+      ) {
+        var container = $.createElement('div').style({'margin-top': 10}).addClass('name').dataset('name', name).style({'cursor': 'pointer'});
+        container.appendChild($.createElement('div').style({'font-weight': 'bold'}).innerHTML(name));
+        var pass = 0;
+        var fail = 0;
+        var total = 0;
+        var start = $.now();
+        for (var i = 0, test; test = docs[name].tags.test[i]; ++i) {
+          try {
+            if(this.test(container, name, test)){
+              ++fail;
+              ++total_fail;
+            } else {
+              ++pass;
+              ++total_pass;
+            }
+          } catch (e) {
+            ++fail;
+            ++total_fail;
+          }
+          ++total;
+          ++total_total;
+        }
+        this.print_results(container, pass, fail, total, start);
+        parent.appendChild(container);
+      }
+    }
+    var container = $.createElement('div').style({'margin-top': 10});
+    container.appendChild($.createElement('div').style({'font-weight': 'bold'}).innerHTML('Total'));
+    var results = $.createElement('div');
+    this.print_results(results, total_pass, total_fail, total_total, total_start);
+    container.appendChild(results);
+    parent.appendChild(container);
+  };
+  test_runner.prototype.test = function(parent, name, test) {
+    var result = eval(test.code);
+    var expected = eval('('+test.result+')');
+    if (rocket.equal(result, expected)) {
+      return 0;
+    } else {
+      return 1;
+    }
+  };
+  test_runner.prototype.print_results = function(parent, pass, fail, total, start) {
+    var container = $.createElement('div');
+    container.appendChild($.createElement('span').innerHTML('( '));
+    container.appendChild($.createElement('span').style({'color':'green'}).innerHTML(pass + ' pass'));
+    container.appendChild($.createElement('span').innerHTML(' / '));
+    container.appendChild($.createElement('span').style({'color':'red'}).innerHTML(fail + ' fail'));
+    container.appendChild($.createElement('span').innerHTML(' / '));
+    container.appendChild($.createElement('span').innerHTML(total + ' total'));
+    container.appendChild($.createElement('span').innerHTML(' / '));
+    container.appendChild($.createElement('span').innerHTML($.numberFormat(((pass + fail) / total) * 100, 0, '', '') + ' % '));
+    container.appendChild($.createElement('span').innerHTML(' in '));
+    container.appendChild($.createElement('span').innerHTML($.numberFormat($.now() - start, 0, '', ',') + ' ms'));
+    container.appendChild($.createElement('span').innerHTML(' )'));
+    parent.appendChild(container);
+  };
+
 
   $('html,body').style({'border': 0, 'margin': 0, 'height': '100%'});
 
@@ -418,10 +555,9 @@ rocket.ready(function() {
   });
 
   $('body').live('div.name', 'click', function() {
-    (new layer($(this).dataset('name'))).render();
+    (new layer($(this).dataset('name') + ($(this).hasClass('test_runner') ? '/test_runner' : ''))).render();
   });
 
   (new layer(window.location.hash.substr(1))).render();
 
 });
-
