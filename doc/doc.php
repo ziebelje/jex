@@ -1,6 +1,6 @@
 <?php
 
-new doc('../src');
+new doc('src'); // Must run this script from the parent directory...meh.
 
 class doc {
 

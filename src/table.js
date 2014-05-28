@@ -4,13 +4,7 @@
 /**
  * Creates a table with the chosen number of rows and columns. Makes it easy
  * and fast to create a table and offers a few functions for easily accessing
- * elements inside the table.
- *
- * Tested:
- * <ul>
- * <li>Chrome 30 - OK</li>
- * <li>IE 10 - OK</li>
- * </ul>
+ * elements inside the table or appending rows/columns.
  *
  * @example
  * // Create a table with 0 rows and 0 columns.
@@ -32,12 +26,18 @@
  * // Create a table with four rows and two columns with the top row in a thead.
  * var table = new jex.table({'rows': 4, 'columns': 2, 'header': true});
  *
+ * @example
+ * // Create a table and then add a row to it, then add a row above that row.
+ * var table = new jex.table();
+ * table.add_row();
+ * table.add_row(0);
+ *
  * @constructor
  *
  * @param {{rows: number, columns: number, header: boolean}} options
- * rows: How many rows are in the table, including any header. Default 0.<br/>
- * columns: How many columns are in the table. Default 0.<br/>
- * header: Whether or not a thead is placed on the table. A thead counts as
+ * <strong>rows</strong> - How many rows are in the table, including any header. Default 0.<br/>
+ * <strong>columns</strong> - How many columns are in the table. Default 0.<br/>
+ * <strong>header</strong> - Whether or not a thead is placed on the table. A thead counts as
  * one of your rows. Default false.
  */
 jex.table = function(options) {
@@ -136,6 +136,7 @@ jex.table.prototype.render_tr_ = function(cell_type, opt_row_index) {
  *
  * @param {number} row_index The index of the row to fill in.
  * @param {Array.<string|rocket.Elements>} data The data to put in the row.
+ * This can either be an array of strings or elements; they can be mixed.
  */
 jex.table.prototype.fill_row = function(row_index, data) {
   var column = 0;
@@ -154,7 +155,8 @@ jex.table.prototype.fill_row = function(row_index, data) {
 
 
 /**
- * Add a row to the end of the table.
+ * Add a row to the table, either at the end or the position specified by
+ * opt_row_index.
  *
  * @param {number=} opt_row_index Optional placement in the table, including
  * any header rows, 0-indexed. This will take that position and scoot
@@ -170,7 +172,7 @@ jex.table.prototype.add_row = function(opt_row_index) {
 
 
 /**
- * Remove a specific row from the table.
+ * Remove a specific row from the table specified by row_index.
  *
  * @param {number} row_index The row to remove, 0-indexed, beginning with the
  * header row as index 0.
@@ -183,9 +185,9 @@ jex.table.prototype.remove_row = function(row_index) {
 
 
 /**
- * Get the actual table element from this instance of the jex.table class.
+ * Get the table element from this instance of the jex.table class.
  *
- * @return {rocket.Elements} The actual table element.
+ * @return {rocket.Elements} The table element.
  */
 jex.table.prototype.table = function() {
   return this.table_;
@@ -193,9 +195,9 @@ jex.table.prototype.table = function() {
 
 
 /**
- * Get the actual tbody element from this instance of the jex.table class.
+ * Get the tbody element from this instance of the jex.table class.
  *
- * @return {rocket.Elements} The actual tbody element.
+ * @return {rocket.Elements} The tbody element.
  */
 jex.table.prototype.tbody = function() {
   return this.tbody_;
@@ -203,31 +205,32 @@ jex.table.prototype.tbody = function() {
 
 
 /**
- * Get the actual tr element at the specified index.
+ * Get the tr element at the specified index.
  *
- * @param {number} row The index of the row to fetch. Includes the header row.
+ * @param {number} row_index The index of the row to fetch. Includes the
+ * header row.
  *
- * @return {rocket.Elements} The actual tr element.
+ * @return {rocket.Elements} The tr element.
  */
-jex.table.prototype.tr = function(row) {
-  return this.trs_[row];
+jex.table.prototype.tr = function(row_index) {
+  return this.trs_[row_index];
 };
 
 
 /**
- * Get the actual td element at the specified row/column index. The arguments
+ * Get the td element at the specified row/column index. The arguments
  * are ordered such that x and y both increment moving outward to the right
  * and down from the origin (top left).
  *
- * @param {number} column The index of the column the td is located in.
- * @param {number} row The index of the row the td is located in. Includes the
- * header row.
+ * @param {number} column_index The index of the column the td is located in.
+ * @param {number} row_index The index of the row the td is located in.
+ * Includes the header row.
  *
- * @return {rocket.Elements} The actual td element.
+ * @return {rocket.Elements} The td element.
  */
-jex.table.prototype.td = function(column, row) {
+jex.table.prototype.td = function(column_index, row_index) {
   // The arguments get swapped because it's more convenient to store tds as they
   // get placed into the tr, which means they are organized somewhat counter-
   // intuitively.
-  return this.tds_[row][column];
+  return this.tds_[row_index][column_index];
 };
