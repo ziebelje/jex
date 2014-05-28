@@ -13,15 +13,15 @@
  * </ul>
  *
  * @example
- * // Create a table with one row and one column.
+ * // Create a table with 0 rows and 0 columns.
  * var table = new jex.table();
  *
  * @example
- * // Create a table with four rows and one column
+ * // Create a table with four rows and 0 columns.
  * var table = new jex.table({'rows': 4});
  *
  * @example
- * // Create a table with four columns and one row.
+ * // Create a table with four columns and 0 rows.
  * var table = new jex.table({'columns': 4});
  *
  * @example
@@ -35,14 +35,14 @@
  * @constructor
  *
  * @param {{rows: number, columns: number, header: boolean}} options
- * rows: How many rows are in the table. Default 1.<br/>
- * columns: How many columns are in the table. Default 1.<br/>
+ * rows: How many rows are in the table, including any header. Default 0.<br/>
+ * columns: How many columns are in the table. Default 0.<br/>
  * header: Whether or not a thead is placed on the table. A thead counts as
  * one of your rows. Default false.
  */
 jex.table = function(options) {
-  var rows = options.rows || 1;
-  var columns = options.columns || 1;
+  var rows = options.rows || ((options.header === true) ? 1 : 0);
+  this.columns_ = options.columns || 0;
 
   this.table_ = rocket.createElement('table');
   this.table_.setAttribute({
@@ -55,17 +55,21 @@ jex.table = function(options) {
 
   var tr;
   if (options.header === true) {
+    // This is adding the first row, so subtract one from the row count to avoid
+    // adding too many rows because the passed row count includes the header
+    // row.
+    rows--;
+
     this.thead_ = rocket.createElement('thead');
-    tr = this.render_tr_(columns, 'th');
+    tr = this.render_tr_('th');
     this.trs_.push(tr);
     this.thead_.appendChild(tr);
     this.table_.appendChild(this.thead_);
-    rows--;
   }
 
   var tbody = rocket.createElement('tbody');
   for (var i = 0; i < rows; i++) {
-    tr = this.render_tr_(columns, 'td');
+    tr = this.render_tr_('td');
     this.trs_.push(tr);
     this.tbody_.appendChild(tr);
   }
@@ -75,25 +79,54 @@ jex.table = function(options) {
 
 
 /**
- * Renders a tr with a specific number of columns.
+ * The number of columns currently in the table.
+ *
+ * @type {number}
+ */
+jex.table.prototype.columns_;
+
+
+/**
+ * An array of all the trs in the table.
+ *
+ * @type {Array.<rocket.Elements>}
+ */
+jex.table.prototype.trs_;
+
+
+/**
+ * An array of arrays of all the tds in the table organized by row then column.
+ *
+ * @type {Array.<Array.<rocket.Elements>>}
+ */
+jex.table.prototype.tds_;
+
+
+/**
+ * Renders a tr with the number of columns specified on the table.
  *
  * @private
  *
- * @param {number} columns The number of columns.
- * @param {string} cell_type
+ * @param {string} cell_type Either "th" or "td" depending on what type of row
+ * this is.
+ * @param {number=} opt_row_index The row to place these tds in. The placement
+ * is important for the storage of this.tds_ so that it can be properly used
+ * to place values.
  *
  * @return {rocket.Elements}
  */
-jex.table.prototype.render_tr_ = function(columns, cell_type) {
+jex.table.prototype.render_tr_ = function(cell_type, opt_row_index) {
+  var row_index = opt_row_index || this.trs_.length;
+
   var tr = rocket.createElement('tr');
   var tds = [];
   var cell;
-  for (var i = 0; i < columns; i++) {
+  for (var i = 0; i < this.columns_; i++) {
     cell = rocket.createElement(cell_type);
     tds.push(cell);
     tr.appendChild(cell);
   }
-  this.tds_.push(tds);
+  this.tds_.splice(row_index, 0, tds);
   return tr;
 };
 
@@ -101,23 +134,51 @@ jex.table.prototype.render_tr_ = function(columns, cell_type) {
 /**
  * Fills a row in the table with the given data.
  *
- * @param {number} row The index of the row to fill in.
- * @param {Array.<string|rocket.Elements>}
- * data The data to put in the row.
+ * @param {number} row_index The index of the row to fill in.
+ * @param {Array.<string|rocket.Elements>} data The data to put in the row.
  */
-jex.table.prototype.fill_row = function(row, data) {
+jex.table.prototype.fill_row = function(row_index, data) {
   var column = 0;
   var len = data.length;
   for (; column < len; column++) {
     if (jex.type(data[column]) === 'object') {
       // Allow placing of elements directly into the td.
-      this.td(column, row).innerHTML('');
-      this.td(column, row).appendChild(/** @type {rocket.Elements} */ (data[column]));
+      this.td(column, row_index).innerHTML('');
+      this.td(column, row_index).appendChild(/** @type {rocket.Elements} */ (data[column]));
     }
     else {
-      this.td(column, row).innerHTML(/** @type {string} */ (data[column]));
+      this.td(column, row_index).innerHTML(/** @type {string} */ (data[column]));
     }
   }
+};
+
+
+/**
+ * Add a row to the end of the table.
+ *
+ * @param {number=} opt_row_index Optional placement in the table, including
+ * any header rows, 0-indexed. This will take that position and scoot
+ * everything else below it. If ommitted, place the new row at the end.
+ */
+jex.table.prototype.add_row = function(opt_row_index) {
+  var row_index = opt_row_index || this.trs_.length;
+  var tr = this.render_tr_('td', opt_row_index);
+
+  this.tbody_.insertBefore(tr, this.trs_[row_index]);
+  this.trs_.splice(row_index, 0, tr);
+};
+
+
+/**
+ * Remove a specific row from the table.
+ *
+ * @param {number} row_index The row to remove, 0-indexed, beginning with the
+ * header row as index 0.
+ */
+jex.table.prototype.remove_row = function(row_index) {
+  this.trs_[row_index].parentNode().removeChild(this.trs_[row_index]);
+  this.trs_.splice(row_index, 1);
+  this.tds_.splice(row_index, 1);
 };
 
 
