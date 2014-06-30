@@ -128,12 +128,45 @@ jex.console.time = function(timer_name) {
  * Wrapper for native console.timeEnd(). This will not work as desired if
  * called when a console does not exist and the call goes to the buffer.
  *
- * @link https://developer.mozilla.org/en-US/docs/Web/API/console.time
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.timeEnd
  *
  * @param {string} timer_name The name of the timer.
  */
 jex.console.timeEnd = function(timer_name) {
   jex.console.add_to_buffer_('timeEnd', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Wrapper for native console.group().
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.group
+ */
+jex.console.group = function() {
+  jex.console.add_to_buffer_('group', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Wrapper for native console.groupCollapsed().
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.groupCollapsed
+ */
+jex.console.groupCollapsed = function() {
+  jex.console.add_to_buffer_('groupCollapsed', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Wrapper for native console.groupEnd().
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.groupEnd
+ */
+jex.console.groupEnd = function() {
+  jex.console.add_to_buffer_('groupEnd', arguments);
   jex.console.flush_buffer_();
 };
 
