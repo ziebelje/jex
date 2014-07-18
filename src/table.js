@@ -162,8 +162,9 @@ jex.table.prototype.fill_row = function(row_index, data) {
  * any header rows, 0-indexed. This will take that position and scoot
  * everything else below it. If ommitted, place the new row at the end.
  *
- * @return {number} The number of rows in the table (including headers) after
- * this adjustment.
+ * @return {number} The index of the row you just added. It will be
+ * opt_row_index when provided, else the number of the rows in the table
+ * (including headers) minus one.
  */
 jex.table.prototype.add_row = function(opt_row_index) {
   var row_index = opt_row_index || this.trs_.length;
@@ -172,7 +173,7 @@ jex.table.prototype.add_row = function(opt_row_index) {
   this.tbody_.insertBefore(tr, this.trs_[row_index]);
   this.trs_.splice(row_index, 0, tr);
 
-  return this.trs_.length;
+  return row_index;
 };
 
 
