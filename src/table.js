@@ -161,6 +161,9 @@ jex.table.prototype.fill_row = function(row_index, data) {
  * @param {number=} opt_row_index Optional placement in the table, including
  * any header rows, 0-indexed. This will take that position and scoot
  * everything else below it. If ommitted, place the new row at the end.
+ *
+ * @return {number} The number of rows in the table (including headers) after
+ * this adjustment.
  */
 jex.table.prototype.add_row = function(opt_row_index) {
   var row_index = opt_row_index || this.trs_.length;
@@ -168,6 +171,8 @@ jex.table.prototype.add_row = function(opt_row_index) {
 
   this.tbody_.insertBefore(tr, this.trs_[row_index]);
   this.trs_.splice(row_index, 0, tr);
+
+  return this.trs_.length;
 };
 
 
@@ -176,11 +181,16 @@ jex.table.prototype.add_row = function(opt_row_index) {
  *
  * @param {number} row_index The row to remove, 0-indexed, beginning with the
  * header row as index 0.
+ *
+ * @return {number} The number of rows in the table (including headers) after
+ * this adjustment.
  */
 jex.table.prototype.remove_row = function(row_index) {
   this.trs_[row_index].parentNode().removeChild(this.trs_[row_index]);
   this.trs_.splice(row_index, 1);
   this.tds_.splice(row_index, 1);
+
+  return this.trs_.length;
 };
 
 
