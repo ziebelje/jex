@@ -3,6 +3,8 @@ JeX
 
 JeX is a JavaScript library with some useful classes and other utilities.
 
+Documentation: http://jonziebell.com/jex/doc
+
 Requires https://github.com/nicklynj/rocket.
 
 JeX currently provides the following:
@@ -17,4 +19,4 @@ JeX currently provides the following:
 * jex.prettyprint - Prettyprinter for JavaScript objects. Similar to the native JSON prettyprinter but supports color schemes and doesn't lack support for older versions of IE like the native one does.
 * jex.type - Easy, fast, cross-browser, frame-safe type checking.
 
-See doc/index.html for usage details.
+See doc/index.html for usage details. 
