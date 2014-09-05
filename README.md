@@ -5,7 +5,7 @@ JeX is a JavaScript library with some useful classes and other utilities.
 
 Documentation: http://jonziebell.com/jex/doc
 
-Requires https://github.com/nicklynj/rocket.
+Requires https://github.com/nicklynj/rocket
 
 JeX currently provides the following:
 * jex.console - Cross-browser console wrapper.
