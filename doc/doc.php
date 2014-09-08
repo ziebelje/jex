@@ -54,7 +54,7 @@ class doc {
       }
     }
 
-    file_put_contents('docs.js', 'var docs = ' . json_encode($this->data));
+    var_dump(file_put_contents('doc/docs.js', 'var docs = ' . json_encode($this->data)));
 
   }
 
@@ -229,4 +229,3 @@ class doc {
   }
 
 }
-

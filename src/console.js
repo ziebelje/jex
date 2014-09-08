@@ -18,7 +18,8 @@
  *
  * Tested:
  * <ul>
- * <li>Chrome 30 - OK</li>
+ * <li>Chrome 36 - OK</li>
+ * <li>IE 9 - OK</li>
  * <li>IE 10 - OK</li>
  * <li>IE 11 - In IE11 and potentially other browsers, the console exists
  * even when not open but does not produce output. Therefore, the attempts
@@ -29,10 +30,7 @@
  * </ul>
  *
  * @example
- * // You only need to call the constructor once; it just adds prototype
- * // methods to this class. By including this class, you can do the following
- * // or similar:
- * jex.console.log('Text');
+ * jex.console.log('Log');
  * jex.console.error('Error');
  *
  * @const
@@ -40,106 +38,106 @@
  * @namespace
  *
  * @link http://benalman.com/projects/javascript-debug-console-log/
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/Console
  * @link https://developers.google.com/chrome-developer-tools/docs/console-api
  */
 jex.console = {};
 
 
 /**
- * Wrapper for native console.log().
+ * Log a message and stack trace to console if first argument is false.
  *
- * @link https://developer.mozilla.org/en-US/docs/Web/API/console.log
+ * @link https://developer.chrome.com/devtools/docs/console-api#consoleassertexpression-object
  *
- * @param {Object} message The message to output to the console.
+ * @param {*} expression The expression to test.
+ * @param {*} object Object to use for the assertion message. If no object is
+ * provided, "Assertion Failure" will be displayed as default message.
  */
-jex.console.log = function(message) {
-  jex.console.add_to_buffer_('log', arguments);
+jex.console.assert = function(expression, object) {
+  jex.console.add_to_buffer_('assert', arguments);
   jex.console.flush_buffer_();
 };
 
 
 /**
- * Wrapper for native console.error().
+ * Clears the console.
+ *
+ * @link https://developer.chrome.com/devtools/docs/console-api#consoleclear
+ */
+jex.console.clear = function() {
+  jex.console.add_to_buffer_('clear', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Logs the number of times that this particular call to count() has been
+ * called. This function takes an optional argument label.
+ *
+ * If label is supplied, this function logs the number of times count() has been
+ * called with that particular label.
+ *
+ * If label is omitted, the function logs the number of times count() has been
+ * called at this particular line.
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/Console.count
+ *
+ * @param {string=} opt_label If this is supplied, count() outputs the number of
+ * times it has been called at this line and with that label.
+ */
+jex.console.count = function(opt_label) {
+  jex.console.add_to_buffer_('count', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Displays an interactive listing of the properties of a specified JavaScript
+ * object. This listing lets you use disclosure triangles to examine the
+ * contents of child objects.
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/Console.dir
+ *
+ * @param {string} object A JavaScript object whose properties should be output.
+ */
+jex.console.dir = function(object) {
+  jex.console.add_to_buffer_('dir', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Outputs an error message to the Web Console.
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/API/console.error
  *
- * @param {Object} message The message to output to the console.
+ * @param {string} message The message to output.
+ * @param {...Object} var_args Additional arguments for advanced output. See
+ * official documentation for more detail.
  */
-jex.console.error = function(message) {
+jex.console.error = function(message, var_args) {
   jex.console.add_to_buffer_('error', arguments);
   jex.console.flush_buffer_();
 };
 
 
 /**
- * Wrapper for native console.debug().
+ * An alias for error().
  *
- * @link https://developer.mozilla.org/en-US/docs/Web/API/console.debug
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.error
  *
- * @param {Object} message The message to output to the console.
+ * @param {string} message The message to output.
+ * @param {...Object} var_args Additional arguments for advanced output. See
+ * official documentation for more detail.
  */
-jex.console.debug = function(message) {
-  jex.console.add_to_buffer_('debug', arguments);
-  jex.console.flush_buffer_();
+jex.console.exception = function(message, var_args) {
+  jex.console.error(message, var_args);
 };
 
 
 /**
- * Wrapper for native console.warn().
- *
- * @link https://deveoper.mozilla.org/en-US/docs/Web/API/console.warn
- *
- * @param {Object} message The message to output to the console.
- */
-jex.console.warn = function(message) {
-  jex.console.add_to_buffer_('warn', arguments);
-  jex.console.flush_buffer_();
-};
-
-
-/**
- * Wrapper for native console.info().
- *
- * @link https://developer.mozilla.org/en-US/docs/Web/API/console.info
- *
- * @param {Object} message The message to output to the console.
- */
-jex.console.info = function(message) {
-  jex.console.add_to_buffer_('info', arguments);
-  jex.console.flush_buffer_();
-};
-
-
-/**
- * Wrapper for native console.time(). This will not work as desired if called
- * when a console does not exist and the call goes to the buffer.
- *
- * @link https://developer.mozilla.org/en-US/docs/Web/API/console.time
- *
- * @param {string} timer_name The name of the timer.
- */
-jex.console.time = function(timer_name) {
-  jex.console.add_to_buffer_('time', arguments);
-  jex.console.flush_buffer_();
-};
-
-
-/**
- * Wrapper for native console.timeEnd(). This will not work as desired if
- * called when a console does not exist and the call goes to the buffer.
- *
- * @link https://developer.mozilla.org/en-US/docs/Web/API/console.timeEnd
- *
- * @param {string} timer_name The name of the timer.
- */
-jex.console.timeEnd = function(timer_name) {
-  jex.console.add_to_buffer_('timeEnd', arguments);
-  jex.console.flush_buffer_();
-};
-
-
-/**
- * Wrapper for native console.group().
+ * Creates a new inline group in the Web Console log. This indents all following
+ * output by an additional level, until console.groupEnd() is called.
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/API/console.group
  */
@@ -150,7 +148,12 @@ jex.console.group = function() {
 
 
 /**
- * Wrapper for native console.groupCollapsed().
+ * Creates a new inline group in the Web Console. Unlike console.group(),
+ * however, the new group is created collapsed. The user will need to use the
+ * disclosure button next to it to expand it, revealing the entries created in
+ * the group.
+ *
+ * Call console.groupEnd() to back out to the parent group.
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/API/console.groupCollapsed
  */
@@ -161,7 +164,7 @@ jex.console.groupCollapsed = function() {
 
 
 /**
- * Wrapper for native console.groupEnd().
+ * Exits the current inline group in the Web Console.
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/API/console.groupEnd
  */
@@ -172,12 +175,133 @@ jex.console.groupEnd = function() {
 
 
 /**
- * Wrapper for native console.clear().
+ * Outputs an informational message to the Web Console.
  *
- * @link https://developers.google.com/chrome-developer-tools/docs/console-api#consoleclear
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.info
+ *
+ * @param {string} message The message to output.
+ * @param {...Object} var_args Additional arguments for advanced output. See
+ * official documentation for more detail.
  */
-jex.console.clear = function() {
-  jex.console.add_to_buffer_('clear', arguments);
+jex.console.info = function(message, var_args) {
+  jex.console.add_to_buffer_('info', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Outputs a message to the Web Console.
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.log
+ *
+ * @param {string} message The message to output.
+ * @param {...Object} var_args Additional arguments for advanced output. See
+ * official documentation for more detail.
+ */
+jex.console.log = function(message, var_args) {
+  jex.console.add_to_buffer_('log', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Starts the JavaScript profiler. You can specify an optional label for the
+ * profile.
+ *
+ * @link https://developer.chrome.com/devtools/docs/console-api#consoleprofilelabel
+ *
+ * @param {String=} opt_label An optional label for the profile.
+ */
+jex.console.profile = function(opt_label) {
+  jex.console.add_to_buffer_('profile', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Stops the current JavaScript CPU profiling session, if one is in progress,
+ * and prints the report to the Profiles panel.
+ *
+ * @link https://developer.chrome.com/devtools/docs/console-api#consoleprofileend
+ *
+ * @param {String=} opt_label An optional label for the profile.
+ */
+jex.console.profileEnd = function(opt_label) {
+  jex.console.add_to_buffer_('profileEnd', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Output an object to a table. There is currently no official documentation on
+ * this function.
+ *
+ * @param {Object} object The object to display.
+ */
+jex.console.table = function(object) {
+  jex.console.add_to_buffer_('table', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Starts a timer you can use to track how long an operation takes. You give
+ * each timer a unique name, and may have up to 10,000 timers running on a given
+ * page. When you call console.timeEnd() with the same name, the browser will
+ * output the time, in milliseconds, that elapsed since the timer was started.
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.time
+ *
+ * @param {string} timer_name The name to give the new timer. This will identify
+ * the timer; use the same name when calling console.timeEnd() to stop the timer
+ * and get the time output to the console.
+ */
+jex.console.time = function(timer_name) {
+  jex.console.add_to_buffer_('time', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Stops a timer that was previously started by calling console.time().
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.timeEnd
+ *
+ * @param {string} timer_name The name of the timer to stop. Once stopped, the
+ * elapsed time is automatically displayed in the Web Console.
+ */
+jex.console.timeEnd = function(timer_name) {
+  jex.console.add_to_buffer_('timeEnd', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Outputs a stack trace to the Web Console.
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.trace
+ *
+ * @param {string} message The message to output.
+ * @param {...Object} var_args Additional arguments for advanced output. See
+ * official documentation for more detail.
+ */
+jex.console.trace = function(message, var_args) {
+  jex.console.add_to_buffer_('trace', arguments);
+  jex.console.flush_buffer_();
+};
+
+
+/**
+ * Outputs a warning message to the Web Console.
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/console.warn
+ *
+ * @param {string} message The message to output.
+ * @param {...Object} var_args Additional arguments for advanced output. See
+ * official documentation for more detail.
+ */
+jex.console.warn = function(message, var_args) {
+  jex.console.add_to_buffer_('warn', arguments);
   jex.console.flush_buffer_();
 };
 

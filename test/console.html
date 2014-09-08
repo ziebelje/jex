@@ -4,35 +4,84 @@
     <title>JeX - console</title>
     <script type="text/javascript" src="js/rocket.13.10.min.js"></script>
     <script type="text/javascript" src="../src/jex.js"></script>
-    <script type="text/javascript" src="../src/jex.console.js"></script>
+    <script type="text/javascript" src="../src/console.js"></script>
     <script type="text/javascript">
       var $ = rocket.extend(rocket.$, rocket);
       $.ready(function() {
         jex.console.log('If you do not have a console open, this message should go to the buffer and output when the buffer is available...usually. See documentation for known quirks with this.');
 
-        $('#log').addEventListener('click', function() {
-          jex.console.log('jex.console.log');
-        });
-        $('#error').addEventListener('click', function() {
-          jex.console.error('jex.console.error');
-        });
-        $('#debug').addEventListener('click', function() {
-          jex.console.debug('jex.console.debug');
-        });
-        $('#warn').addEventListener('click', function() {
-          jex.console.warn('jex.console.warn');
-        });
-        $('#info').addEventListener('click', function() {
-          jex.console.info('jex.console.info');
-        });
-        $('#time').addEventListener('click', function() {
-          jex.console.time('timer');
-        });
-        $('#timeEnd').addEventListener('click', function() {
-          jex.console.timeEnd('timer');
+        var o1 = {
+          'foo': 'bar',
+          'baz': {
+            'a': 1,
+            'b': 2
+          },
+          'bar': true
+        };
+
+        var o2 = [
+          {'a': 1, 'b': 2, 'c': 3},
+          {'a': 1, 'b': 2, 'c': 3},
+          {'a': 1, 'b': 2, 'c': 3}
+        ];
+
+        $('#assert').addEventListener('click', function() {
+          jex.console.assert(true, "Foo");
+          jex.console.assert(false, "Foo");
         });
         $('#clear').addEventListener('click', function() {
           jex.console.clear();
+        });
+        $('#count').addEventListener('click', function() {
+          jex.console.count();
+          jex.console.count();
+          jex.console.count('a');
+          jex.console.count('a');
+        });
+        $('#dir').addEventListener('click', function() {
+          jex.console.dir(o1);
+        });
+        $('#error').addEventListener('click', function() {
+          jex.console.error('Error');
+        });
+        $('#exception').addEventListener('click', function() {
+          jex.console.exception('Exception');
+        });
+        $('#group').addEventListener('click', function() {
+          jex.console.group();
+        });
+        $('#groupCollapsed').addEventListener('click', function() {
+          jex.console.groupCollapsed();
+        });
+        $('#groupEnd').addEventListener('click', function() {
+          jex.console.groupEnd();
+        });
+        $('#info').addEventListener('click', function() {
+          jex.console.info('Info');
+        });
+        $('#log').addEventListener('click', function() {
+          jex.console.log('Log');
+        });
+        $('#profile').addEventListener('click', function() {
+          jex.console.profile();
+        });
+        $('#profileEnd').addEventListener('click', function() {
+          jex.console.profileEnd();
+        });
+        $('#table').addEventListener('click', function() {
+          jex.console.table(o2);
+        });
+        $('#time').addEventListener('click', function() {
+          jex.console.time('a');
+        });
+        $('#timeEnd').addEventListener('click', function() {
+          jex.console.timeEnd('a');
+        });
+        $('#trace').addEventListener('click', function() {
+          jex.console.trace();
+        });
+        $('#warn').addEventListener('click', function() {
+          jex.console.warn('Warn');
         });
 
       });
@@ -40,13 +89,23 @@
   </head>
   <body>
     <p>Click the buttons to trigger the specified console events.</p>
-    <button id="log">log</button>
+    <button id="assert">assert</button>
+    <button id="clear">clear</button>
+    <button id="count">count</button>
+    <button id="dir">dir</button>
     <button id="error">error</button>
-    <button id="debug">debug</button>
-    <button id="warn">warn</button>
+    <button id="exception">exception</button>
+    <button id="group">group</button>
+    <button id="groupCollapsed">groupCollapsed</button>
+    <button id="groupEnd">groupEnd</button>
     <button id="info">info</button>
+    <button id="log">log</button>
+    <button id="profile">profile</button>
+    <button id="profileEnd">profileEnd</button>
+    <button id="table">table</button>
     <button id="time">time</button>
     <button id="timeEnd">timeEnd</button>
-    <button id="clear">clear</button>
+    <button id="trace">trace</button>
+    <button id="warn">warn</button>
   </body>
 </html>
