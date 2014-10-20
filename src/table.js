@@ -79,6 +79,30 @@ jex.table = function(options) {
 
 
 /**
+ * The table element.
+ *
+ * @type {rocket.Elements}
+ */
+jex.table.prototype.table_;
+
+
+/**
+ * The tbody element.
+ *
+ * @type {rocket.Elements}
+ */
+jex.table.prototype.tbody_;
+
+
+/**
+ * The thead element. This will be undefined if there is no header on the table.
+ *
+ * @type {rocket.Elements}
+ */
+jex.table.prototype.thead_;
+
+
+/**
  * The number of columns currently in the table.
  *
  * @type {number}
@@ -202,6 +226,17 @@ jex.table.prototype.remove_row = function(row_index) {
  */
 jex.table.prototype.table = function() {
   return this.table_;
+};
+
+
+/**
+ * Get the thead element from this instance of the jex.table class. Will return
+ * undefined if there is no header.
+ *
+ * @return {rocket.Elements} The thead element.
+ */
+jex.table.prototype.thead = function() {
+  return this.thead_;
 };
 
 
