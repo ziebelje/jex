@@ -1,7 +1,7 @@
 JeX
 ===
 
-Documentation: http://jonziebell.com/jex/doc
+Documentation: http://htmlpreview.github.io/?https://github.com/ziebelje/jex/blob/master/doc/index.html#jex  
 Requires https://github.com/nicklynj/rocket
 
 ###jex.console
