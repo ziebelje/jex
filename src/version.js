@@ -5,4 +5,4 @@
  *
  * @const
  */
-jex.version = '15.05';
+jex.version = '15.10';

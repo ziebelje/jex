@@ -1,3 +1,4 @@
+
 // todo:  ; :, = + and - _, have different values
 
 // todo: add meta key support (for mac and then windows key)
@@ -26,30 +27,9 @@ jex.hotkey = {};
  *
  * @private
  *
- * @type {Object.<string, Object.<string, {callback: Function, inputs: Array.<Element>}>>}
+ * @type {Array.<Object.<string, {hotkey: string, callback: Function, inputs: Array.<Element>}>>}
  */
-jex.hotkey.hotkeys_ = {};
-
-
-/**
- * The currently active group. By default, any hotkeys with no group will be
- * added to the '' group which is enabled by default.
- *
- * @private
- *
- * @type {Array.<string>}
- */
-jex.hotkey.active_groups_ = [''];
-
-
-/**
- * Whether or not hotkeys are currently enabled.
- *
- * @private
- *
- * @type {boolean}
- */
-jex.hotkey.enabled_ = false;
+jex.hotkey.hotkeys_ = [];
 
 
 /**
@@ -64,7 +44,7 @@ jex.hotkey.current_hotkey_ = '';
 
 /**
  * Whether or not jex.hotkey is active. If not, there will be no global
- * keydown event lstener.
+ * keydown event listener.
  *
  * @private
  *
@@ -81,16 +61,6 @@ jex.hotkey.is_active_ = false;
  * @type {number}
  */
 jex.hotkey.sequence_timeout_ = 1000;
-
-
-/**
- * Whether or not detection of hotkeys is paused.
- *
- * @private
- *
- * @type {boolean}
- */
-jex.hotkey.paused_ = false;
 
 
 /**
@@ -283,19 +253,13 @@ jex.hotkey.shift_keycode_map_ = {
  * is enabled, an event listener will be attached to the document that fires
  * onkeydown.
  *
- * @param {{hotkey: (string|Array.<string>), callback: Function, group: string,
- * input: (rocket.Elements|Array.<rocket.Elements>)}}
- * options
+ * @param {{hotkey: (string|Array.<string>), callback: Function, input:
+ * (rocket.Elements|Array.<rocket.Elements>)}} options
  *
  * hotkey: The hotkey to add to the page. Hotkeys cannot be duplicated in the
  * same group.
  *
  * callback: The function to call when the hotkey conditions are met.
- *
- * group: The name of the group this hotkey belongs to. Default is '' (empty
- * string). One or more groups can be enabled at any given time. Hotkeys can
- * be re-used if they exist in different groups; all of their callbacks will
- * still fire in the order they were added.
  *
  * input: todo
  */
@@ -311,201 +275,48 @@ jex.hotkey.add = function(options) {
     inputs[i] = inputs[i][0];
   }
 
-  var hotkey, callback, group;
   for (var i = 0, len = hotkeys.length; i < len; ++i) {
-    // Normalize the hotkey.
-    hotkey = jex.hotkey.normalize_(hotkeys[i]);
-    callback = options.callback;
-    group = options.group || '';
-
-    // Add the hotkey and create the group if it does not yet exist.
-    if (jex.hotkey.hotkeys_.hasOwnProperty(group) === false) {
-      jex.hotkey.hotkeys_[group] = {};
-    }
-    jex.hotkey.hotkeys_[group][hotkey] = {
-      'callback': callback,
+    jex.hotkey.hotkeys_.push({
+      'hotkey': jex.hotkey.normalize_(hotkeys[i]),
+      'callback': options.callback,
       'inputs': inputs
-    };
+    });
   }
 
-  jex.hotkey.check_listener_();
+  jex.hotkey.add_listener_();
 };
 
 
 /**
- * Look at the currently active group(s) and all of the hotkeys in it and
- * determine if the event listener needs to be attached to the document.
+ * Add the global event listener.
  *
  * @private
  */
-jex.hotkey.check_listener_ = function() {
-  var need_listener = false;
-
-  if (jex.hotkey.paused_ === false) {
-    // Loop over all of the currently active groups.
-    for (var i = 0, len = jex.hotkey.active_groups_.length; i < len; ++i) {
-      // If any of these groups have at least one hotkey in them, hotkey detection
-      // should be enabled.
-      if (rocket.keys(/** @type {!Object} */ (jex.hotkey.hotkeys_[jex.hotkey.active_groups_[i]])).length > 0) {
-        need_listener = true;
-        break;
-      }
-    }
-  }
-
-  if (need_listener === true) {
-    if (jex.hotkey.enabled_ === false) {
-      rocket.$(window).addEventListener(
-          'keydown.jex.hotkey',
-          jex.hotkey.keydown_handler_
-      );
-      jex.hotkey.enabled_ = true;
-    }
-  }
-  else {
-    rocket.$(window).removeEventListener('.jex.hotkey');
-    jex.hotkey.enabled_ = false;
-  }
-};
-
-
-/**
- * Pause detection of hotkeys. All groups and hotkey definitions will remain
- * unchanged, they will just stop being detected.
- */
-jex.hotkey.pause = function() {
-  jex.hotkey.paused_ = true;
-};
-
-
-/**
- * Unpause detection of hotkeys.
- */
-jex.hotkey.unpause = function() {
-  jex.hotkey.paused_ = false;
-};
-
-
-/**
- * Remove a hotkey from an optionally specified group. If group is not
- * specified, the hotkey will be removed from the default group.
- *
- * @param {string} hotkey The hotkey to remove.
- * @param {string} group The group to remove the hotkey from.
- */
-jex.hotkey.remove = function(hotkey, group) {
-  group = group || '';
-
-  // Normalize and delete the hotkey.
-  hotkey = jex.hotkey.normalize_(hotkey);
-  delete jex.hotkey.hotkeys_[group][hotkey];
-
-  // Remove the document event listener if necessary.
-  jex.hotkey.check_listener_();
-};
-
-
-/**
- * Remove a group of hotkeys entirely. Both the group and the hotkeys in the
- * group are completely removed, even if the group is currently active. They
- * will need to be re-added in order to be used again.
- *
- * @param {string} group The group to remove.
- */
-jex.hotkey.remove_group = function(group) {
-  // Delete the group.
-  delete jex.hotkey.hotkeys_[group];
-
-  // Remove this group from the active groups.
-  jex.hotkey.active_groups_.splice(rocket.indexOf(jex.hotkey.active_groups_, group), 1);
-
-  // Remove the document event listener if necessary.
-  jex.hotkey.check_listener_();
-};
-
-
-/**
- * Enable a group or groups of hotkeys.
- *
- * @param {string|Array} group The group or groups to enable.
- */
-jex.hotkey.enable_group = function(group) {
-  group = rocket.arrayify(group);
-
-  for (var i = 0, len = group.length; i < len; ++i) {
-    jex.hotkey.active_groups_.push(group[i]);
-  }
-
-  // @param {(Array|rocket.Elements)} array The Array.
-  // @param {function(this:Object, Object, number, Object):Object} fnct
-  // The function to call for every value in this Array.
-  // @param {Object=} opt_self The value to use as this when executing the function.
-  // @return {Array}
-
-  // Remove duplicates
-  jex.hotkey.active_groups_ = rocket.filter(
-      jex.hotkey.active_groups_,
-
-      function(needle, index, haystack) {
-        haystack = /** @type {Array} */ (haystack);
-        var foo = (rocket.indexOf(haystack, needle) === index);
-        return foo;
-      }
-      );
-};
-
-
-/**
- * Disable a group or groups of hotkeys.
- *
- * @param {string|Array} group The group or groups to disable. Disabled groups
- * still exist and can be re-enabled. If you wish to remove a group entirely,
- * use remove_group().
- */
-jex.hotkey.disable_group = function(group) {
-  group = rocket.arrayify(group);
-
-  for (var i = 0, len = group.length; i < len; ++i) {
-    jex.hotkey.active_groups_.splice(
-        rocket.indexOf(jex.hotkey.active_groups_, group[i]),
-        1
+jex.hotkey.add_listener_ = function() {
+  // TODO: Fix this. This is an issue where if something (yinaf) removed ALL of
+  // the event listeners on the window, then jex.hotkey still thinks it's there
+  // because of the is_active_ flag...probably just try to look for the event
+  // listener on every add or maybe just remove and re-add every time since that
+  // might be quicker anyways.
+  jex.hotkey.remove_listener_();
+  if (jex.hotkey.is_active_ === false) {
+    jex.hotkey.is_active_ = true;
+    rocket.$(window).addEventListener(
+      'keydown.jex.hotkey',
+      jex.hotkey.keydown_handler_
     );
   }
-
-  // Remove the document event listener if necessary.
-  jex.hotkey.check_listener_();
 };
 
 
 /**
- * Set the currently active group or groups.
+ * Remove the global event listener.
  *
- * @param {string|Array.<string>} group The group or groups to make active. All
- * currently active groups not in this list will be disabled.
+ * @private
  */
-jex.hotkey.set_group = function(group) {
-  jex.hotkey.active_groups_ = rocket.arrayify(group);
-
-  // Remove the document event listener if necessary.
-  jex.hotkey.check_listener_();
-};
-
-
-/**
- * Remove all hotkeys. Only bother if there are known hotkeys to check for in
- * the first place.
- */
-jex.hotkey.remove_all = function() {
-  if (jex.hotkey.is_active_ === true) {
-    // Get rid of all of the hotkeys.
-    jex.hotkey.hotkeys_ = {};
-
-    // Reset the active group.
-    jex.hotkey.active_groups_ = [''];
-
-    // Remove the document event listener if necessary.
-    jex.hotkey.check_listener_();
-  }
+jex.hotkey.remove_listener_ = function() {
+  jex.hotkey.is_active_ = false;
+  rocket.$(window).removeEventListener('.jex.hotkey');
 };
 
 
@@ -583,6 +394,7 @@ jex.hotkey.keydown_handler_ = function(e) {
   // enter" as the hotkey, which isn't really desirable. To prevent that,
   // hotkeys inside of inputs can only be single keystrokes (modifiers are
   // allowed).
+  // todo ??? get rid of this?
   if (target_is_input === true) {
     jex.hotkey.reset_();
   }
@@ -657,47 +469,33 @@ jex.hotkey.keydown_handler_ = function(e) {
   // 2. need to handle hotkeys inside inputs better
   // jex.console.log('"' + jex.hotkey.current_hotkey_ + '"');
 
-  // At this point we have determined what the current hotkey is. If hotkey
-  // pressed, execute that callback and reset.
-  var hotkey_pressed = false;
-  var hotkey;
-  for (var i = 0, len = jex.hotkey.active_groups_.length; i < len; ++i) {
-    if (jex.hotkey.hotkeys_[jex.hotkey.active_groups_[i]][jex.hotkey.current_hotkey_]) {
-      hotkey = jex.hotkey.hotkeys_[jex.hotkey.active_groups_[i]][jex.hotkey.current_hotkey_];
-
-      // Look for conditions where the hotkey should not execute and handle
-      // them.
-      if (hotkey.inputs.length > 0) {
-        // If the hotkey has inputs attached, then it should only work inside
-        // those inputs.
-        if (rocket.indexOf(hotkey.inputs, e.target) === -1) {
-          jex.hotkey.reset_();
-          return;
-        }
-        // jex.hotkey.reset_();
-      }
-      else {
-        // If the hotkey does not have inputs attached, then it should not
-        // trigger inside of inputs (or editable fields) so you can type in
-        // them.
-        if (target_is_input === true) {
-          jex.hotkey.reset_();
-          return;
-        }
-      }
-      hotkey_pressed = true;
-      hotkey.callback();
+  // At this point we have determined what the current hotkey is. Now loop over
+  // the listed hotkeys and see if any of them fit.
+  var activated_hotkeys = rocket.filter(jex.hotkey.hotkeys_, function(hotkey) {
+    if (hotkey.inputs.length > 0) {
+      return (
+        hotkey.hotkey === jex.hotkey.current_hotkey_ &&
+        rocket.indexOf(hotkey.inputs, e.target) !== -1
+      );
     }
+    else {
+      return hotkey.hotkey === jex.hotkey.current_hotkey_;
+    }
+  });
+
+  // Loop over each of the activated hotkeys and run the callback.
+  for (var i = 0, len = activated_hotkeys.length; i < len; ++i) {
+    activated_hotkeys[i].callback();
   }
 
   // Callbacks have already been executed. Now, if a hotkey was pressed, reset
   // the hotkey so we can start over. Otherwise reset the timeout to allow for
   // another key to be pressed.
-  if (hotkey_pressed === true) {
+  if (activated_hotkeys.length > 0) {
     jex.hotkey.reset_();
     e.preventDefault();
   }
-  if (hotkey_pressed === false) {
+  else {
     clearTimeout(jex.hotkey.sequence_timeout_handle_);
     jex.hotkey.sequence_timeout_handle_ = setTimeout(
         jex.hotkey.reset_,
