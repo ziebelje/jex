@@ -317,7 +317,6 @@ jex.hotkey.add = function(options) {
  * @param {number} hotkey_id
  */
 jex.hotkey.remove = function(hotkey_id) {
-  console.log('remove ' + hotkey_id)
   jex.hotkey.hotkeys_.splice(hotkey_id, 1);
   if (jex.hotkey.hotkeys_.length === 0) {
     jex.hotkey.remove_listener_();
