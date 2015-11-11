@@ -1362,6 +1362,16 @@ jex.hotkey.shift_keycode_map_ = {
  * input: todo
  */
 jex.hotkey.add = function(options) {
+  var has_listener = jex.hotkey.has_listener_();
+
+  // If there is no event listener present, reset the hotkey array. This fixes
+  // an issue where hotkeys remain in the array when they were essentially
+  // flushed by something like Yinaf switching layers and removing all event
+  // listeners.
+  if (has_listener === false) {
+    jex.hotkey.hotkeys_ = [];
+  }
+
   var hotkeys = [].concat(options.hotkey);
 
   // Make input an array of inputs (or an empty array if not set). This also
@@ -1381,38 +1391,73 @@ jex.hotkey.add = function(options) {
     });
   }
 
-  jex.hotkey.add_listener_();
+  // Add the event listener if it's not present.
+  if (has_listener === false) {
+    jex.hotkey.add_listener_();
+  }
+
+  // Reset the current hotkey. If I do something that would add a new hotkey to
+  // the document, assume that whatever I was just doing has nothing to do with
+  // any hotkeys. This manifested itself when a popup div could be closed with
+  // "escape". Pressing "escape" twice when closing would call the hotkey
+  // callback, clear the hotkey, then add "escape" to the hotkey. Rapidly
+  // opening the popup again and pressing escape made the hotkey "escape
+  // escape", which was unintended. I think this should alleviate that.
+  jex.hotkey.reset_();
 
   return jex.hotkey.hotkeys_.length - 1;
 };
 
+
+/**
+ * Remove a hotkey.
+ *
+ * @param {number} hotkey_id
+ */
 jex.hotkey.remove = function(hotkey_id) {
+  console.log('remove ' + hotkey_id)
   jex.hotkey.hotkeys_.splice(hotkey_id, 1);
   if (jex.hotkey.hotkeys_.length === 0) {
-    this.remove_listener_();
+    jex.hotkey.remove_listener_();
   }
-}
+};
 
 
 /**
- * Add the global event listener.
+ * Check to see if the jex.hotkey namespaced listener is in the listener tree.
+ * Loop logic pulled straight from rocket.EventTarget.removeAllEventListeners.
+ *
+ * @private
+ *
+ * @return {boolean}
+ */
+jex.hotkey.has_listener_ = function() {
+  var tree = rocket.EventTarget.getListenerTree();
+  for (var guid in tree) {
+    for (var type in tree[+guid]) {
+      for (var ns in tree[+guid][type]) {
+        if (ns === 'jex.hotkey') {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+};
+
+
+/**
+ * Add the global event listener. This does not check to see if it exists
+ * since this is only called from one spot in jex.hotkey.add which already
+ * checks that for other reasons. Faster this way.
  *
  * @private
  */
 jex.hotkey.add_listener_ = function() {
-  // TODO: Fix this. This is an issue where if something (yinaf) removed ALL of
-  // the event listeners on the window, then jex.hotkey still thinks it's there
-  // because of the is_active_ flag...probably just try to look for the event
-  // listener on every add or maybe just remove and re-add every time since that
-  // might be quicker anyways.
-  jex.hotkey.remove_listener_();
-  if (jex.hotkey.is_active_ === false) {
-    jex.hotkey.is_active_ = true;
-    rocket.$(window).addEventListener(
-      'keydown.jex.hotkey',
-      jex.hotkey.keydown_handler_
-    );
-  }
+  rocket.$(window).addEventListener(
+    'keydown.jex.hotkey',
+    jex.hotkey.keydown_handler_
+  );
 };
 
 
